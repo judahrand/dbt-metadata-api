@@ -157,25 +157,27 @@ class Query:
     #         raise ValueError(f"No source called {unique_id} found")
     #     return SourceNode.from_pydantic(node)
 
-    # @strawberry.field
-    # def tests(self) -> list[TestNode]:
-    #     return [
-    #         TestNode(node)
-    #         for node in get_manifest().nodes.values()
-    #         if node.resource_type.value == "test"
-    #     ]
+    @strawberry.field
+    def tests(self) -> list[TestNode]:
+        manifest = get_manifest()
+        return [
+            TestNode(
+                manifest=manifest,
+                unique_id=node.unique_id
+            )
+            for node in manifest.nodes.values()
+            if node.resource_type.value == "test"
+        ]
 
-    # @strawberry.field
-    # def test(
-    #     self,
-    #     unique_id: Annotated[
-    #         str,
-    #         strawberry.argument(description="The unique ID of this particular test"),
-    #     ],
-    # ) -> TestNode:
-    #     node = get_manifest().nodes[unique_id]
-    #     if node.resource_type.value == "test":
-    #         raise ValueError(f"No test called {unique_id} found")
-    #     if isinstance(node, ParsedSingularTestNode):
-    #         return SingularTestNode.from_pydantic(node)
-    #     return GenericTestNode.from_pydantic(node)
+    @strawberry.field
+    def test(
+        self,
+        unique_id: Annotated[
+            str,
+            strawberry.argument(description="The unique ID of this particular test"),
+        ],
+    ) -> TestNode:
+        return TestNode(
+            manifest=get_manifest(),
+            unique_id=unique_id,
+        )

@@ -2,10 +2,12 @@ from typing import Optional
 
 import strawberry
 
+from dbt_metadata_api.types.tests import TestNode
+
 from ..interfaces import NodeInterface
 from .common import CatalogColumn
 from .sources import SourceNode
-from .metrics import MetricNode
+from .tests import TestNode
 
 
 @strawberry.type
@@ -107,3 +109,16 @@ class ModelNode(NodeInterface):
     @strawberry.field
     def schema(self) -> Optional[str]:
         return self.node.schema_
+
+    @strawberry.field
+    def tests(self) -> Optional[list[TestNode]]:
+        return [
+            TestNode(
+                manifest=self.manifest,
+                unique_id=node.unique_id,
+            )
+            for node
+            in self.manifest.nodes.values()
+            if node.resource_type.value == "test"
+            and self.unique_id in node.depends_on.nodes
+        ]
