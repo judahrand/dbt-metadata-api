@@ -17,7 +17,7 @@ class ModelNode(NodeInterface):
 
     @strawberry.field
     def alias(self) -> Optional[str]:
-        return self.node().alias
+        return self.node.alias
 
     @strawberry.field
     def children_l1(self) -> Optional[list[str]]:
@@ -44,7 +44,7 @@ class ModelNode(NodeInterface):
 
     @strawberry.field
     def compiled_sql(self) -> Optional[str]:
-        if getattr(self.ndoe, "language", "sql") == "sql":
+        if getattr(self.node, "language", "sql") == "sql":
             return self.compiled_code()
         return None
 
@@ -54,33 +54,30 @@ class ModelNode(NodeInterface):
 
     @strawberry.field
     def depends_on(self) -> Optional[list[str]]:
-        return [
-            node
-            for node_type in self.node.depends_on.values()
-            for node in node_type
-        ]
+        depends_on = []
+        if isinstance(self.node.depends_on.macros, str):
+            depends_on.append(self.node.depends_on.macros)
+        else:
+            depends_on.extend(self.node.depends_on.macros)
+
+        if isinstance(self.node.depends_on.nodes, str):
+            depends_on.append(self.node.depends_on.nodes)
+        else:
+            depends_on.extend(self.node.depends_on.nodes)
+        return depends_on
 
     @strawberry.field
     def materialized_type(self) -> Optional[str]:
         return self.node.config.materialized
 
     @strawberry.field
-    def metrics(self) -> Optional[list[MetricNode]]:
-        if hasattr(self.node, "metrics"):
-            return [
-                MetricNode(
-                    manifest=self.manifest,
-                    unique_id=unique_id,
-                )
-                for unique_id in
-                self.node.metrics
-            ]
-
-    @strawberry.field
     def parents_models(self) -> Optional[list["ModelNode"]]:
         parents = self.manifest.parent_map[self.unique_id]
         return [
-            self.manifest.nodes[unique_id]
+            ModelNode(
+                manifest=self.manifest,
+                unique_id=unique_id,
+            )
             for unique_id in parents
             if self.manifest.nodes[unique_id].resource_type.value == "model"
         ]
@@ -103,7 +100,7 @@ class ModelNode(NodeInterface):
 
     @strawberry.field
     def raw_sql(self) -> Optional[str]:
-        if getattr(self.ndoe, "language", "sql") == "sql":
+        if getattr(self.node, "language", "sql") == "sql":
             return self.raw_code()
         return None
 

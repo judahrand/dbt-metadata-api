@@ -92,8 +92,6 @@ class Query:
     ) -> ModelNode:
         manifest = get_manifest()
         node = manifest.nodes[unique_id]
-        if node.resource_type.value == "model":
-            raise ValueError(f"No model called {unique_id} found")
         return ModelNode(manifest=manifest, unique_id=node.unique_id)
 
     # @strawberry.field

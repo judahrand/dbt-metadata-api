@@ -30,11 +30,17 @@ class MetricNode(NodeInterface):
 
     @strawberry.field
     def depends_on(self) -> Optional[list[str]]:
-        return [
-            node
-            for node_type in self.node.depends_on.values()
-            for node in node_type
-        ]
+        depends_on = []
+        if isinstance(self.node.depends_on.macros, str):
+            depends_on.append(self.node.depends_on.macros)
+        else:
+            depends_on.extend(self.node.depends_on.macros)
+
+        if isinstance(self.node.depends_on.nodes, str):
+            depends_on.append(self.node.depends_on.nodes)
+        else:
+            depends_on.extend(self.node.depends_on.nodes)
+        return depends_on
 
     @strawberry.field
     def dimensions(self) -> Optional[list[str]]:
