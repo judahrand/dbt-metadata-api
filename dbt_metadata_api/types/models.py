@@ -5,15 +5,19 @@ import strawberry
 from ..interfaces import NodeInterface
 from .common import CatalogColumn
 from .sources import SourceNode
-from ..utils import get_manifest
+from .metrics import MetricNode
 
 
 @strawberry.type
 class ModelNode(NodeInterface):
 
+    def __post_init__(self) -> None:
+        if self.node.resource_type.value != "model":
+            raise TypeError("That unique_id is not a model.")
+
     @strawberry.field
     def alias(self) -> Optional[str]:
-        return self._get_node().alias
+        return self.node().alias
 
     @strawberry.field
     def children_l1(self) -> Optional[list[str]]:
@@ -61,7 +65,19 @@ class ModelNode(NodeInterface):
         return self.node.config.materialized
 
     @strawberry.field
-    def parents_models(self) -> Optional["ModelNode"]:
+    def metrics(self) -> Optional[list[MetricNode]]:
+        if hasattr(self.node, "metrics"):
+            return [
+                MetricNode(
+                    manifest=self.manifest,
+                    unique_id=unique_id,
+                )
+                for unique_id in
+                self.node.metrics
+            ]
+
+    @strawberry.field
+    def parents_models(self) -> Optional[list["ModelNode"]]:
         parents = self.manifest.parent_map[self.unique_id]
         return [
             self.manifest.nodes[unique_id]
@@ -70,10 +86,13 @@ class ModelNode(NodeInterface):
         ]
 
     @strawberry.field
-    def parents_sources(self) -> Optional[SourceNode]:
+    def parents_sources(self) -> Optional[list[SourceNode]]:
         parents = self.manifest.parent_map[self.unique_id]
         return [
-            self.manifest.nodes[unique_id]
+            SourceNode(
+                manifest=self.manifest,
+                unique_id=unique_id,
+            )
             for unique_id in parents
             if self.manifest.nodes[unique_id].resource_type.value == "source"
         ]
