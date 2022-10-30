@@ -1,9 +1,10 @@
 from typing import Optional
-from pydantic import BaseModel
 
 import strawberry
+from pydantic import BaseModel
 
 from ..interfaces import NodeInterface
+from .utils import flatten_depends_on
 
 
 @strawberry.type
@@ -15,7 +16,6 @@ class MetricFilter:
 
 @strawberry.type
 class MetricNode(NodeInterface):
-
     def __post_init__(self) -> None:
         if self.node.resource_type.value != "metric":
             raise TypeError("That unique_id is not a metric.")
@@ -30,17 +30,7 @@ class MetricNode(NodeInterface):
 
     @strawberry.field
     def depends_on(self) -> Optional[list[str]]:
-        depends_on = []
-        if isinstance(self.node.depends_on.macros, str):
-            depends_on.append(self.node.depends_on.macros)
-        else:
-            depends_on.extend(self.node.depends_on.macros)
-
-        if isinstance(self.node.depends_on.nodes, str):
-            depends_on.append(self.node.depends_on.nodes)
-        else:
-            depends_on.extend(self.node.depends_on.nodes)
-        return depends_on
+        return flatten_depends_on(self.node.depends_on)
 
     @strawberry.field
     def dimensions(self) -> Optional[list[str]]:
@@ -58,8 +48,7 @@ class MetricNode(NodeInterface):
                 operator=filter.operator,
                 value=filter.value,
             )
-            for filter in
-            self.node.filters
+            for filter in self.node.filters
         ]
 
     @strawberry.field

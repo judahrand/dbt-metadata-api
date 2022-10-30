@@ -8,11 +8,11 @@ from ..interfaces import NodeInterface
 from .common import CatalogColumn
 from .sources import SourceNode
 from .tests import TestNode
+from .utils import flatten_depends_on
 
 
 @strawberry.type
 class ModelNode(NodeInterface):
-
     def __post_init__(self) -> None:
         if self.node.resource_type.value != "model":
             raise TypeError("That unique_id is not a model.")
@@ -36,8 +36,7 @@ class ModelNode(NodeInterface):
                 tags=col.tags,
                 type=col.data_type,
             )
-            for idx, col
-            in enumerate(self.node.columns.values())
+            for idx, col in enumerate(self.node.columns.values())
         ]
 
     @strawberry.field
@@ -56,17 +55,7 @@ class ModelNode(NodeInterface):
 
     @strawberry.field
     def depends_on(self) -> Optional[list[str]]:
-        depends_on = []
-        if isinstance(self.node.depends_on.macros, str):
-            depends_on.append(self.node.depends_on.macros)
-        else:
-            depends_on.extend(self.node.depends_on.macros)
-
-        if isinstance(self.node.depends_on.nodes, str):
-            depends_on.append(self.node.depends_on.nodes)
-        else:
-            depends_on.extend(self.node.depends_on.nodes)
-        return depends_on
+        return flatten_depends_on(self.node.depends_on)
 
     @strawberry.field
     def materialized_type(self) -> Optional[str]:
@@ -117,8 +106,7 @@ class ModelNode(NodeInterface):
                 manifest=self.manifest,
                 unique_id=node.unique_id,
             )
-            for node
-            in self.manifest.nodes.values()
+            for node in self.manifest.nodes.values()
             if node.resource_type.value == "test"
             and self.unique_id in node.depends_on.nodes
         ]

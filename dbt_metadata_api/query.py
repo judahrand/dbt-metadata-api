@@ -163,7 +163,7 @@ class Query:
         return [
             TestNode(
                 manifest=manifest,
-                unique_id=node.unique_id
+                unique_id=node.unique_id,
             )
             for node in manifest.nodes.values()
             if node.resource_type.value == "test"

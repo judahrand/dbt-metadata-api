@@ -1,7 +1,7 @@
 from typing import Optional
-from pydantic import BaseModel
 
 import strawberry
+from pydantic import BaseModel
 
 from .scalars import DateTime, JSONObject
 from .utils import get_manifest
@@ -59,9 +59,7 @@ class NodeInterface(dbtCoreInterface):
     def node(self) -> BaseModel:
         return self.manifest.nodes[self.unique_id]
 
-    @strawberry.field(
-        description="The resource type of this node"
-    )
+    @strawberry.field(description="The resource type of this node")
     def resource_type(self) -> Optional[str]:
         return self.node.resource_type.value
 
