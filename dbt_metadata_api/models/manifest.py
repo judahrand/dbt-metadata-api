@@ -41,7 +41,19 @@ class ManifestMetadata(BaseModel):
 
 
 class ResourceType(Enum):
+    model = 'model'
     analysis = 'analysis'
+    test = 'test'
+    snapshot = 'snapshot'
+    operation = 'operation'
+    seed = 'seed'
+    rpc = 'rpc'
+    sql_operation = 'sql operation'
+    docs_block = 'docs block'
+    source = 'source'
+    macro = 'macro'
+    exposure = 'exposure'
+    metric = 'metric'
 
 
 class FileHash(BaseModel):
@@ -97,10 +109,6 @@ class InjectedCTE(BaseModel):
     sql: str
 
 
-class ResourceType1(Enum):
-    test = 'test'
-
-
 class TestConfig(BaseModel):
     class Config:
         extra = Extra.allow
@@ -123,26 +131,6 @@ class TestConfig(BaseModel):
     error_if: Optional[str] = '!= 0'
 
 
-class ResourceType2(Enum):
-    model = 'model'
-
-
-class ResourceType3(Enum):
-    operation = 'operation'
-
-
-class ResourceType4(Enum):
-    rpc = 'rpc'
-
-
-class ResourceType5(Enum):
-    sql_operation = 'sql operation'
-
-
-class ResourceType6(Enum):
-    test = 'test'
-
-
 class TestMetadata(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -150,10 +138,6 @@ class TestMetadata(BaseModel):
     name: str
     kwargs: Optional[Dict[str, Any]] = {}
     namespace: Optional[Optional[str]] = None
-
-
-class ResourceType7(Enum):
-    seed = 'seed'
 
 
 class SeedConfig(BaseModel):
@@ -182,18 +166,6 @@ class SeedConfig(BaseModel):
     quote_columns: Optional[Optional[bool]] = None
 
 
-class ResourceType8(Enum):
-    snapshot = 'snapshot'
-
-
-class ResourceType9(Enum):
-    analysis = 'analysis'
-
-
-class ResourceType10(Enum):
-    test = 'test'
-
-
 class ParsedSingularTestNode(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -209,7 +181,7 @@ class ParsedSingularTestNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType10
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[TestConfig] = {
@@ -246,26 +218,6 @@ class ParsedSingularTestNode(BaseModel):
     config_call_dict: Optional[Dict[str, Any]] = {}
 
 
-class ResourceType11(Enum):
-    operation = 'operation'
-
-
-class ResourceType12(Enum):
-    model = 'model'
-
-
-class ResourceType13(Enum):
-    rpc = 'rpc'
-
-
-class ResourceType14(Enum):
-    sql_operation = 'sql operation'
-
-
-class ResourceType15(Enum):
-    test = 'test'
-
-
 class ParsedGenericTestNode(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -282,7 +234,7 @@ class ParsedGenericTestNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType15
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[TestConfig] = {
@@ -321,10 +273,6 @@ class ParsedGenericTestNode(BaseModel):
     file_key_name: Optional[Optional[str]] = None
 
 
-class ResourceType16(Enum):
-    seed = 'seed'
-
-
 class ParsedSeedNode(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -340,7 +288,7 @@ class ParsedSeedNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType16
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[SeedConfig] = {
@@ -383,10 +331,6 @@ class ParsedSeedNode(BaseModel):
     config_call_dict: Optional[Dict[str, Any]] = {}
 
 
-class ResourceType17(Enum):
-    snapshot = 'snapshot'
-
-
 class SnapshotConfig(BaseModel):
     class Config:
         extra = Extra.allow
@@ -415,10 +359,6 @@ class SnapshotConfig(BaseModel):
     target_database: Optional[Optional[str]] = None
     updated_at: Optional[Optional[str]] = None
     check_cols: Optional[Optional[Union[str, List[str]]]] = None
-
-
-class ResourceType18(Enum):
-    source = 'source'
 
 
 class Quoting(BaseModel):
@@ -502,10 +442,6 @@ class SourceConfig(BaseModel):
     enabled: Optional[bool] = True
 
 
-class ResourceType19(Enum):
-    macro = 'macro'
-
-
 class SupportedLanguage(Enum):
     python = 'python'
     sql = 'sql'
@@ -548,22 +484,6 @@ class Type(Enum):
     application = 'application'
 
 
-class ResourceType20(Enum):
-    model = 'model'
-    analysis = 'analysis'
-    test = 'test'
-    snapshot = 'snapshot'
-    operation = 'operation'
-    seed = 'seed'
-    rpc = 'rpc'
-    sql_operation = 'sql operation'
-    docs_block = 'docs block'
-    source = 'source'
-    macro = 'macro'
-    exposure = 'exposure'
-    metric = 'metric'
-
-
 class MaturityEnum(Enum):
     low = 'low'
     medium = 'medium'
@@ -583,22 +503,6 @@ class ExposureConfig(BaseModel):
         extra = Extra.allow
 
     enabled: Optional[bool] = True
-
-
-class ResourceType21(Enum):
-    model = 'model'
-    analysis = 'analysis'
-    test = 'test'
-    snapshot = 'snapshot'
-    operation = 'operation'
-    seed = 'seed'
-    rpc = 'rpc'
-    sql_operation = 'sql operation'
-    docs_block = 'docs block'
-    source = 'source'
-    macro = 'macro'
-    exposure = 'exposure'
-    metric = 'metric'
 
 
 class MetricFilter(BaseModel):
@@ -673,7 +577,7 @@ class CompiledSingularTestNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType1
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[TestConfig] = {
@@ -730,7 +634,7 @@ class CompiledModelNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType2
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -792,7 +696,7 @@ class CompiledHookNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType3
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -855,7 +759,7 @@ class CompiledRPCNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType4
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -917,7 +821,7 @@ class CompiledSqlNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType5
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -980,7 +884,7 @@ class CompiledGenericTestNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType6
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[TestConfig] = {
@@ -1039,7 +943,7 @@ class CompiledSeedNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType7
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[SeedConfig] = {
@@ -1102,7 +1006,7 @@ class CompiledSnapshotNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType8
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -1163,7 +1067,7 @@ class ParsedAnalysisNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType9
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -1220,7 +1124,7 @@ class ParsedHookNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType11
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -1278,7 +1182,7 @@ class ParsedModelNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType12
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -1335,7 +1239,7 @@ class ParsedRPCNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType13
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -1392,7 +1296,7 @@ class ParsedSqlNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType14
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: Optional[NodeConfig] = {
@@ -1449,7 +1353,7 @@ class ParsedSnapshotNode(BaseModel):
     path: str
     original_file_path: str
     name: str
-    resource_type: ResourceType17
+    resource_type: ResourceType
     alias: str
     checksum: FileHash
     config: SnapshotConfig
@@ -1518,7 +1422,7 @@ class ParsedMacro(BaseModel):
     original_file_path: str
     name: str
     macro_sql: str
-    resource_type: ResourceType19
+    resource_type: ResourceType
     tags: Optional[List[str]] = []
     depends_on: Optional[MacroDependsOn] = {'macros': []}
     description: Optional[str] = ''
@@ -1543,7 +1447,7 @@ class ParsedExposure(BaseModel):
     name: str
     type: Type
     owner: ExposureOwner
-    resource_type: Optional[ResourceType20] = 'exposure'
+    resource_type: Optional[ResourceType] = 'exposure'
     description: Optional[str] = ''
     label: Optional[Optional[str]] = None
     maturity: Optional[Optional[MaturityEnum]] = None
@@ -1580,7 +1484,7 @@ class ParsedMetric(BaseModel):
     window: Optional[Optional[MetricTime]] = None
     model: Optional[Optional[str]] = None
     model_unique_id: Optional[Optional[str]] = None
-    resource_type: Optional[ResourceType21] = 'metric'
+    resource_type: Optional[ResourceType] = 'metric'
     meta: Optional[Dict[str, Any]] = {}
     tags: Optional[List[str]] = []
     config: Optional[MetricConfig] = {'enabled': True}
@@ -1671,7 +1575,7 @@ class ParsedSourceDefinition(BaseModel):
     source_description: str
     loader: str
     identifier: str
-    resource_type: ResourceType18
+    resource_type: ResourceType
     quoting: Optional[Quoting] = {
         'database': None,
         'schema': None,
