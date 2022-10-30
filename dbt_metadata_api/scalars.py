@@ -2,11 +2,19 @@ from datetime import datetime
 from typing import Any, NewType
 
 import dateutil.parser
-from strawberry import scalar
+import strawberry
 
-from dbt_metadata_api.models.manifest import ColumnInfo
+AnyScalar = strawberry.scalar(
+    NewType("AnyScalar", Any),
+    description=(
+        "This type can represent any scalar type such as int, float, "
+        "string or boolean."
+    ),
+    serialize=lambda v: v,
+    parse_value=lambda v: v,
+)
 
-Datetime = scalar(
+DateTime = strawberry.scalar(
     NewType("Datetime", datetime),
     description=(
         "A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the "
@@ -18,7 +26,7 @@ Datetime = scalar(
     parse_value=dateutil.parser.isoparse,
 )
 
-JSONObject = scalar(
+JSONObject = strawberry.scalar(
     NewType("JSONObject", dict[str, Any]),
     description=(
         "The `JSONObject` scalar type represents JSON objects as specified by "
@@ -30,14 +38,4 @@ JSONObject = scalar(
     ),
     serialize=lambda v: v,
     parse_value=lambda v: v,
-)
-
-Columns = scalar(
-    NewType("Columns", dict[str, ColumnInfo]),
-    description=("Information about columns in a node."),
-    specified_by_url=(
-        "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
-    ),
-    serialize=lambda v: {key: value.dict() for key, value in v.items()},
-    parse_value=lambda v: {key: ColumnInfo(**value) for key, value in v.items()},
 )

@@ -1,5 +1,17 @@
+import enum
+
 import strawberry
 
-from .models import manifest
 
-ResourceType = strawberry.enum(manifest.ResourceType)
+@strawberry.enum
+class FreshnessStatus(enum.Enum):
+    error = "error"
+    pass_ = "pass"
+    warn = "warn"
+
+
+@strawberry.enum
+class TimePeriod(enum.Enum):
+    day = "day"
+    hour = "hour"
+    minute = "minute"
