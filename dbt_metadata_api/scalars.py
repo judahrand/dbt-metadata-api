@@ -15,7 +15,7 @@ AnyScalar = strawberry.scalar(
 )
 
 DateTime = strawberry.scalar(
-    NewType("Datetime", datetime),
+    NewType("DateTime", datetime),
     description=(
         "A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the "
         "`date-time` format outlined in section 5.6 of the RFC 3339 profile of the "

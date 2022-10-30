@@ -8,7 +8,6 @@ from ..scalars import AnyScalar, JSONObject
 
 @strawberry.type
 class CatalogColumn:
-    comment: Optional[str]
     description: Optional[str]
     index: Optional[int]
     meta: Optional[JSONObject]

@@ -1,14 +1,16 @@
 from typing import Optional
+from pydantic import BaseModel
 
 import strawberry
 
-from .enums import ResourceType
-from .scalars import Datetime, JSONObject
+from .scalars import DateTime, JSONObject
 from .utils import get_manifest
 
 
 @strawberry.interface(description="The manifest metadata associated with this node")
 class dbtCoreInterface:
+    manifest: strawberry.Private[BaseModel]
+
     @strawberry.field
     def dbt_schema_version(self) -> str:
         return get_manifest().metadata.dbt_schema_version
@@ -18,8 +20,8 @@ class dbtCoreInterface:
         return get_manifest().metadata.dbt_version
 
     @strawberry.field
-    def generated_at(self) -> Datetime:
-        return Datetime(get_manifest().metadata.generated_at)
+    def generated_at(self) -> DateTime:
+        return DateTime(get_manifest().metadata.generated_at)
 
     @strawberry.field
     def invocation_id(self) -> str:
@@ -47,31 +49,58 @@ class dbtCoreInterface:
 
 
 @strawberry.interface
-class NodeInterface:
+class NodeInterface(dbtCoreInterface):
+
     unique_id: str = strawberry.field(
         description="The unique id name of this particular node"
     )
-    resource_type: Optional[ResourceType] = strawberry.field(
+
+    @property
+    def node(self) -> BaseModel:
+        return self.manifest.nodes[self.unique_id]
+
+    @strawberry.field(
         description="The resource type of this node"
     )
-    package_name: Optional[ResourceType] = strawberry.field(
-        description="The package name of this node"
-    )
-    name: Optional[str] = strawberry.field(
+    def resource_type(self) -> Optional[str]:
+        return self.node.resource_type.value
+
+    @strawberry.field(description="The package name of this node")
+    def package_name(self) -> Optional[str]:
+        return self.node.package_name
+
+    @strawberry.field(
         description="The user-supplied name of this particular node",
     )
-    path: Optional[str] = strawberry.field(
+    def name(self) -> Optional[str]:
+        return self.node.name
+
+    @strawberry.field(
         description='Relative file path of this resource\'s definition within its "resource path"',
     )
-    original_file_path: Optional[str] = strawberry.field(
+    def path(self) -> Optional[str]:
+        return self.node.path
+
+    @strawberry.field(
         description="Relative file path of this resource's definition, including its resource path.",
     )
-    description: Optional[str] = strawberry.field(
+    def original_file_path(self) -> Optional[str]:
+        return self.node.original_file_path
+
+    @strawberry.field(
         description="The user-supplied description for this node",
     )
-    meta: Optional[JSONObject] = strawberry.field(
+    def description(self) -> Optional[str]:
+        return self.node.description
+
+    @strawberry.field(
         description="The key-value store containing metadata relevant to this node",
     )
-    tags: Optional[list[str]] = strawberry.field(
+    def meta(self) -> Optional[JSONObject]:
+        return self.node.meta
+
+    @strawberry.field(
         description="The tags associated with this node",
     )
+    def tags(self) -> Optional[list[str]]:
+        return self.node.tags
