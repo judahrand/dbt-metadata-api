@@ -20,22 +20,20 @@ class ManifestMetadata(BaseModel):
     ] = 'https://schemas.getdbt.com/dbt/manifest/v7.json'
     dbt_version: Optional[str] = '1.3.0b2'
     generated_at: Optional[datetime] = '2022-10-05T17:41:25.798224Z'
-    invocation_id: Optional[Optional[str]] = '020388aa-c5cf-4e92-9391-497c583ddc54'
+    invocation_id: Optional[str] = '020388aa-c5cf-4e92-9391-497c583ddc54'
     env: Optional[Dict[str, str]] = {}
-    project_id: Optional[Optional[str]] = Field(
+    project_id: Optional[str] = Field(
         None, description='A unique identifier for the project'
     )
     user_id: Optional[
-        Optional[
-            constr(
-                regex=r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
-            )
-        ]
+        constr(
+            regex=r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        )
     ] = Field(None, description='A unique identifier for the user')
-    send_anonymous_usage_stats: Optional[Optional[bool]] = Field(
+    send_anonymous_usage_stats: Optional[bool] = Field(
         None, description='Whether dbt is configured to send anonymous usage statistics'
     )
-    adapter_type: Optional[Optional[str]] = Field(
+    adapter_type: Optional[str] = Field(
         None, description='The type name of the adapter'
     )
 
@@ -70,7 +68,7 @@ class Hook(BaseModel):
 
     sql: str
     transaction: Optional[bool] = True
-    index: Optional[Optional[int]] = None
+    index: Optional[int] = None
 
 
 class Docs(BaseModel):
@@ -78,7 +76,7 @@ class Docs(BaseModel):
         extra = Extra.forbid
 
     show: Optional[bool] = True
-    node_color: Optional[Optional[str]] = None
+    node_color: Optional[str] = None
 
 
 class DependsOn(BaseModel):
@@ -96,8 +94,8 @@ class ColumnInfo(BaseModel):
     name: str
     description: Optional[str] = ''
     meta: Optional[Dict[str, Any]] = {}
-    data_type: Optional[Optional[str]] = None
-    quote: Optional[Optional[bool]] = None
+    data_type: Optional[str] = None
+    quote: Optional[bool] = None
     tags: Optional[List[str]] = []
 
 
@@ -114,18 +112,18 @@ class TestConfig(BaseModel):
         extra = Extra.allow
 
     enabled: Optional[bool] = True
-    alias: Optional[Optional[str]] = None
-    schema_: Optional[Optional[str]] = Field('dbt_test__audit', alias='schema')
-    database: Optional[Optional[str]] = None
+    alias: Optional[str] = None
+    schema_: Optional[str] = Field('dbt_test__audit', alias='schema')
+    database: Optional[str] = None
     tags: Optional[Union[List[str], str]] = []
     meta: Optional[Dict[str, Any]] = {}
     materialized: Optional[str] = 'test'
     severity: Optional[
         constr(regex=r'^([Ww][Aa][Rr][Nn]|[Ee][Rr][Rr][Oo][Rr])$')
     ] = 'ERROR'
-    store_failures: Optional[Optional[bool]] = None
-    where: Optional[Optional[str]] = None
-    limit: Optional[Optional[int]] = None
+    store_failures: Optional[bool] = None
+    where: Optional[str] = None
+    limit: Optional[int] = None
     fail_calc: Optional[str] = 'count(*)'
     warn_if: Optional[str] = '!= 0'
     error_if: Optional[str] = '!= 0'
@@ -137,7 +135,7 @@ class TestMetadata(BaseModel):
 
     name: str
     kwargs: Optional[Dict[str, Any]] = {}
-    namespace: Optional[Optional[str]] = None
+    namespace: Optional[str] = None
 
 
 class SeedConfig(BaseModel):
@@ -145,32 +143,32 @@ class SeedConfig(BaseModel):
         extra = Extra.allow
 
     enabled: Optional[bool] = True
-    alias: Optional[Optional[str]] = None
-    schema_: Optional[Optional[str]] = Field(None, alias='schema')
-    database: Optional[Optional[str]] = None
+    alias: Optional[str] = None
+    schema_: Optional[str] = Field(None, alias='schema')
+    database: Optional[str] = None
     tags: Optional[Union[List[str], str]] = []
     meta: Optional[Dict[str, Any]] = {}
     materialized: Optional[str] = 'seed'
-    incremental_strategy: Optional[Optional[str]] = None
+    incremental_strategy: Optional[str] = None
     persist_docs: Optional[Dict[str, Any]] = {}
     post_hook: Optional[List[Hook]] = Field([], alias='post-hook')
     pre_hook: Optional[List[Hook]] = Field([], alias='pre-hook')
     quoting: Optional[Dict[str, Any]] = {}
     column_types: Optional[Dict[str, Any]] = {}
-    full_refresh: Optional[Optional[bool]] = None
-    unique_key: Optional[Optional[Union[str, List[str]]]] = None
-    on_schema_change: Optional[Optional[str]] = 'ignore'
+    full_refresh: Optional[bool] = None
+    unique_key: Optional[Union[str, List[str]]] = None
+    on_schema_change: Optional[str] = 'ignore'
     grants: Optional[Dict[str, Any]] = {}
     packages: Optional[List[str]] = []
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    quote_columns: Optional[Optional[bool]] = None
+    quote_columns: Optional[bool] = None
 
 
 class ParsedSingularTestNode(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -209,9 +207,9 @@ class ParsedSingularTestNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.81637
@@ -223,7 +221,7 @@ class ParsedGenericTestNode(BaseModel):
         extra = Extra.forbid
 
     test_metadata: TestMetadata
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -262,22 +260,22 @@ class ParsedGenericTestNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.821276
     config_call_dict: Optional[Dict[str, Any]] = {}
-    column_name: Optional[Optional[str]] = None
-    file_key_name: Optional[Optional[str]] = None
+    column_name: Optional[str] = None
+    file_key_name: Optional[str] = None
 
 
 class ParsedSeedNode(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -322,9 +320,9 @@ class ParsedSeedNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.822274
@@ -336,39 +334,39 @@ class SnapshotConfig(BaseModel):
         extra = Extra.allow
 
     enabled: Optional[bool] = True
-    alias: Optional[Optional[str]] = None
-    schema_: Optional[Optional[str]] = Field(None, alias='schema')
-    database: Optional[Optional[str]] = None
+    alias: Optional[str] = None
+    schema_: Optional[str] = Field(None, alias='schema')
+    database: Optional[str] = None
     tags: Optional[Union[List[str], str]] = []
     meta: Optional[Dict[str, Any]] = {}
     materialized: Optional[str] = 'snapshot'
-    incremental_strategy: Optional[Optional[str]] = None
+    incremental_strategy: Optional[str] = None
     persist_docs: Optional[Dict[str, Any]] = {}
     post_hook: Optional[List[Hook]] = Field([], alias='post-hook')
     pre_hook: Optional[List[Hook]] = Field([], alias='pre-hook')
     quoting: Optional[Dict[str, Any]] = {}
     column_types: Optional[Dict[str, Any]] = {}
-    full_refresh: Optional[Optional[bool]] = None
-    unique_key: Optional[Optional[str]] = None
-    on_schema_change: Optional[Optional[str]] = 'ignore'
+    full_refresh: Optional[bool] = None
+    unique_key: Optional[str] = None
+    on_schema_change: Optional[str] = 'ignore'
     grants: Optional[Dict[str, Any]] = {}
     packages: Optional[List[str]] = []
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    strategy: Optional[Optional[str]] = None
-    target_schema: Optional[Optional[str]] = None
-    target_database: Optional[Optional[str]] = None
-    updated_at: Optional[Optional[str]] = None
-    check_cols: Optional[Optional[Union[str, List[str]]]] = None
+    strategy: Optional[str] = None
+    target_schema: Optional[str] = None
+    target_database: Optional[str] = None
+    updated_at: Optional[str] = None
+    check_cols: Optional[Union[str, List[str]]] = None
 
 
 class Quoting(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    database: Optional[Optional[bool]] = None
-    schema_: Optional[Optional[bool]] = Field(None, alias='schema')
-    identifier: Optional[Optional[bool]] = None
-    column: Optional[Optional[bool]] = None
+    database: Optional[bool] = None
+    schema_: Optional[bool] = Field(None, alias='schema')
+    identifier: Optional[bool] = None
+    column: Optional[bool] = None
 
 
 class FreshnessMetadata(BaseModel):
@@ -378,7 +376,7 @@ class FreshnessMetadata(BaseModel):
     dbt_schema_version: Optional[str] = 'https://schemas.getdbt.com/dbt/sources/v3.json'
     dbt_version: Optional[str] = '1.3.0b2'
     generated_at: Optional[datetime] = '2022-10-05T17:41:25.794018Z'
-    invocation_id: Optional[Optional[str]] = '020388aa-c5cf-4e92-9391-497c583ddc54'
+    invocation_id: Optional[str] = '020388aa-c5cf-4e92-9391-497c583ddc54'
     env: Optional[Dict[str, str]] = {}
 
 
@@ -391,7 +389,7 @@ class SourceFreshnessRuntimeError(BaseModel):
         extra = Extra.forbid
 
     unique_id: str
-    error: Optional[Optional[Union[str, int]]] = None
+    error: Optional[Union[str, int]] = None
     status: Status
 
 
@@ -412,8 +410,8 @@ class Time(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    count: Optional[Optional[int]] = None
-    period: Optional[Optional[PeriodEnum]] = None
+    count: Optional[int] = None
+    period: Optional[PeriodEnum] = None
 
 
 class TimingInfo(BaseModel):
@@ -421,8 +419,8 @@ class TimingInfo(BaseModel):
         extra = Extra.forbid
 
     name: str
-    started_at: Optional[Optional[datetime]] = None
-    completed_at: Optional[Optional[datetime]] = None
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
 
 
 class ExternalPartition(BaseModel):
@@ -459,7 +457,7 @@ class MacroArgument(BaseModel):
         extra = Extra.forbid
 
     name: str
-    type: Optional[Optional[str]] = None
+    type: Optional[str] = None
     description: Optional[str] = ''
 
 
@@ -495,7 +493,7 @@ class ExposureOwner(BaseModel):
         extra = Extra.forbid
 
     email: str
-    name: Optional[Optional[str]] = None
+    name: Optional[str] = None
 
 
 class ExposureConfig(BaseModel):
@@ -525,8 +523,8 @@ class MetricTime(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    count: Optional[Optional[int]] = None
-    period: Optional[Optional[PeriodEnum1]] = None
+    count: Optional[int] = None
+    period: Optional[PeriodEnum1] = None
 
 
 class MetricConfig(BaseModel):
@@ -541,21 +539,21 @@ class NodeConfig(BaseModel):
         extra = Extra.allow
 
     enabled: Optional[bool] = True
-    alias: Optional[Optional[str]] = None
-    schema_: Optional[Optional[str]] = Field(None, alias='schema')
-    database: Optional[Optional[str]] = None
+    alias: Optional[str] = None
+    schema_: Optional[str] = Field(None, alias='schema')
+    database: Optional[str] = None
     tags: Optional[Union[List[str], str]] = []
     meta: Optional[Dict[str, Any]] = {}
     materialized: Optional[str] = 'view'
-    incremental_strategy: Optional[Optional[str]] = None
+    incremental_strategy: Optional[str] = None
     persist_docs: Optional[Dict[str, Any]] = {}
     post_hook: Optional[List[Hook]] = Field([], alias='post-hook')
     pre_hook: Optional[List[Hook]] = Field([], alias='pre-hook')
     quoting: Optional[Dict[str, Any]] = {}
     column_types: Optional[Dict[str, Any]] = {}
-    full_refresh: Optional[Optional[bool]] = None
-    unique_key: Optional[Optional[Union[str, List[str]]]] = None
-    on_schema_change: Optional[Optional[str]] = 'ignore'
+    full_refresh: Optional[bool] = None
+    unique_key: Optional[Union[str, List[str]]] = None
+    on_schema_change: Optional[str] = 'ignore'
     grants: Optional[Dict[str, Any]] = {}
     packages: Optional[List[str]] = []
     docs: Optional[Docs] = {'show': True, 'node_color': None}
@@ -566,7 +564,7 @@ class CompiledSingularTestNode(BaseModel):
         extra = Extra.forbid
 
     compiled: bool
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -605,17 +603,17 @@ class CompiledSingularTestNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.803982
     config_call_dict: Optional[Dict[str, Any]] = {}
-    compiled_code: Optional[Optional[str]] = None
+    compiled_code: Optional[str] = None
     extra_ctes_injected: Optional[bool] = False
     extra_ctes: Optional[List[InjectedCTE]] = []
-    relation_name: Optional[Optional[str]] = None
+    relation_name: Optional[str] = None
 
 
 class CompiledModelNode(BaseModel):
@@ -623,7 +621,7 @@ class CompiledModelNode(BaseModel):
         extra = Extra.forbid
 
     compiled: bool
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -667,17 +665,17 @@ class CompiledModelNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.806056
     config_call_dict: Optional[Dict[str, Any]] = {}
-    compiled_code: Optional[Optional[str]] = None
+    compiled_code: Optional[str] = None
     extra_ctes_injected: Optional[bool] = False
     extra_ctes: Optional[List[InjectedCTE]] = []
-    relation_name: Optional[Optional[str]] = None
+    relation_name: Optional[str] = None
 
 
 class CompiledHookNode(BaseModel):
@@ -685,7 +683,7 @@ class CompiledHookNode(BaseModel):
         extra = Extra.forbid
 
     compiled: bool
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -729,18 +727,18 @@ class CompiledHookNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.807287
     config_call_dict: Optional[Dict[str, Any]] = {}
-    compiled_code: Optional[Optional[str]] = None
+    compiled_code: Optional[str] = None
     extra_ctes_injected: Optional[bool] = False
     extra_ctes: Optional[List[InjectedCTE]] = []
-    relation_name: Optional[Optional[str]] = None
-    index: Optional[Optional[int]] = None
+    relation_name: Optional[str] = None
+    index: Optional[int] = None
 
 
 class CompiledRPCNode(BaseModel):
@@ -748,7 +746,7 @@ class CompiledRPCNode(BaseModel):
         extra = Extra.forbid
 
     compiled: bool
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -792,17 +790,17 @@ class CompiledRPCNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.808457
     config_call_dict: Optional[Dict[str, Any]] = {}
-    compiled_code: Optional[Optional[str]] = None
+    compiled_code: Optional[str] = None
     extra_ctes_injected: Optional[bool] = False
     extra_ctes: Optional[List[InjectedCTE]] = []
-    relation_name: Optional[Optional[str]] = None
+    relation_name: Optional[str] = None
 
 
 class CompiledSqlNode(BaseModel):
@@ -810,7 +808,7 @@ class CompiledSqlNode(BaseModel):
         extra = Extra.forbid
 
     compiled: bool
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -854,17 +852,17 @@ class CompiledSqlNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.8095949
     config_call_dict: Optional[Dict[str, Any]] = {}
-    compiled_code: Optional[Optional[str]] = None
+    compiled_code: Optional[str] = None
     extra_ctes_injected: Optional[bool] = False
     extra_ctes: Optional[List[InjectedCTE]] = []
-    relation_name: Optional[Optional[str]] = None
+    relation_name: Optional[str] = None
 
 
 class CompiledGenericTestNode(BaseModel):
@@ -873,7 +871,7 @@ class CompiledGenericTestNode(BaseModel):
 
     test_metadata: TestMetadata
     compiled: bool
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -912,19 +910,19 @@ class CompiledGenericTestNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.81105
     config_call_dict: Optional[Dict[str, Any]] = {}
-    compiled_code: Optional[Optional[str]] = None
+    compiled_code: Optional[str] = None
     extra_ctes_injected: Optional[bool] = False
     extra_ctes: Optional[List[InjectedCTE]] = []
-    relation_name: Optional[Optional[str]] = None
-    column_name: Optional[Optional[str]] = None
-    file_key_name: Optional[Optional[str]] = None
+    relation_name: Optional[str] = None
+    column_name: Optional[str] = None
+    file_key_name: Optional[str] = None
 
 
 class CompiledSeedNode(BaseModel):
@@ -932,7 +930,7 @@ class CompiledSeedNode(BaseModel):
         extra = Extra.forbid
 
     compiled: bool
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -977,17 +975,17 @@ class CompiledSeedNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.813088
     config_call_dict: Optional[Dict[str, Any]] = {}
-    compiled_code: Optional[Optional[str]] = None
+    compiled_code: Optional[str] = None
     extra_ctes_injected: Optional[bool] = False
     extra_ctes: Optional[List[InjectedCTE]] = []
-    relation_name: Optional[Optional[str]] = None
+    relation_name: Optional[str] = None
 
 
 class CompiledSnapshotNode(BaseModel):
@@ -995,7 +993,7 @@ class CompiledSnapshotNode(BaseModel):
         extra = Extra.forbid
 
     compiled: bool
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -1039,24 +1037,24 @@ class CompiledSnapshotNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.814346
     config_call_dict: Optional[Dict[str, Any]] = {}
-    compiled_code: Optional[Optional[str]] = None
+    compiled_code: Optional[str] = None
     extra_ctes_injected: Optional[bool] = False
     extra_ctes: Optional[List[InjectedCTE]] = []
-    relation_name: Optional[Optional[str]] = None
+    relation_name: Optional[str] = None
 
 
 class ParsedAnalysisNode(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -1100,9 +1098,9 @@ class ParsedAnalysisNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.8153868
@@ -1113,7 +1111,7 @@ class ParsedHookNode(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -1157,21 +1155,21 @@ class ParsedHookNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.817323
     config_call_dict: Optional[Dict[str, Any]] = {}
-    index: Optional[Optional[int]] = None
+    index: Optional[int] = None
 
 
 class ParsedModelNode(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -1215,9 +1213,9 @@ class ParsedModelNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.8182888
@@ -1228,7 +1226,7 @@ class ParsedRPCNode(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -1272,9 +1270,9 @@ class ParsedRPCNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.819205
@@ -1285,7 +1283,7 @@ class ParsedSqlNode(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -1329,9 +1327,9 @@ class ParsedSqlNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.8202639
@@ -1342,7 +1340,7 @@ class ParsedSnapshotNode(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -1366,9 +1364,9 @@ class ParsedSnapshotNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.8241339
@@ -1379,9 +1377,9 @@ class FreshnessThreshold(BaseModel):
     class Config:
         extra = Extra.forbid
 
-    warn_after: Optional[Optional[Time]] = {'count': None, 'period': None}
-    error_after: Optional[Optional[Time]] = {'count': None, 'period': None}
-    filter: Optional[Optional[str]] = None
+    warn_after: Optional[Time] = {'count': None, 'period': None}
+    error_after: Optional[Time] = {'count': None, 'period': None}
+    filter: Optional[str] = None
 
 
 class SourceFreshnessOutput(BaseModel):
@@ -1404,11 +1402,11 @@ class ExternalTable(BaseModel):
     class Config:
         extra = Extra.allow
 
-    location: Optional[Optional[str]] = None
-    file_format: Optional[Optional[str]] = None
-    row_format: Optional[Optional[str]] = None
-    tbl_properties: Optional[Optional[str]] = None
-    partitions: Optional[Optional[List[ExternalPartition]]] = None
+    location: Optional[str] = None
+    file_format: Optional[str] = None
+    row_format: Optional[str] = None
+    tbl_properties: Optional[str] = None
+    partitions: Optional[List[ExternalPartition]] = None
 
 
 class ParsedMacro(BaseModel):
@@ -1428,10 +1426,10 @@ class ParsedMacro(BaseModel):
     description: Optional[str] = ''
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
     arguments: Optional[List[MacroArgument]] = []
     created_at: Optional[float] = 1664991685.8266501
-    supported_languages: Optional[Optional[List[SupportedLanguage]]] = None
+    supported_languages: Optional[List[SupportedLanguage]] = None
 
 
 class ParsedExposure(BaseModel):
@@ -1449,13 +1447,13 @@ class ParsedExposure(BaseModel):
     owner: ExposureOwner
     resource_type: Optional[ResourceType] = 'exposure'
     description: Optional[str] = ''
-    label: Optional[Optional[str]] = None
-    maturity: Optional[Optional[MaturityEnum]] = None
+    label: Optional[str] = None
+    maturity: Optional[MaturityEnum] = None
     meta: Optional[Dict[str, Any]] = {}
     tags: Optional[List[str]] = []
     config: Optional[ExposureConfig] = {'enabled': True}
     unrendered_config: Optional[Dict[str, Any]] = {}
-    url: Optional[Optional[str]] = None
+    url: Optional[str] = None
     depends_on: Optional[DependsOn] = {'macros': [], 'nodes': []}
     refs: Optional[List[List[str]]] = []
     sources: Optional[List[List[str]]] = []
@@ -1481,9 +1479,9 @@ class ParsedMetric(BaseModel):
     filters: List[MetricFilter]
     time_grains: List[str]
     dimensions: List[str]
-    window: Optional[Optional[MetricTime]] = None
-    model: Optional[Optional[str]] = None
-    model_unique_id: Optional[Optional[str]] = None
+    window: Optional[MetricTime] = None
+    model: Optional[str] = None
+    model_unique_id: Optional[str] = None
     resource_type: Optional[ResourceType] = 'metric'
     meta: Optional[Dict[str, Any]] = {}
     tags: Optional[List[str]] = []
@@ -1501,7 +1499,7 @@ class CompiledAnalysisNode(BaseModel):
         extra = Extra.forbid
 
     compiled: bool
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     fqn: List[str]
     unique_id: str
@@ -1545,17 +1543,17 @@ class CompiledAnalysisNode(BaseModel):
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     docs: Optional[Docs] = {'show': True, 'node_color': None}
-    patch_path: Optional[Optional[str]] = None
-    compiled_path: Optional[Optional[str]] = None
-    build_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
+    compiled_path: Optional[str] = None
+    build_path: Optional[str] = None
     deferred: Optional[bool] = False
     unrendered_config: Optional[Dict[str, Any]] = {}
     created_at: Optional[float] = 1664991685.801986
     config_call_dict: Optional[Dict[str, Any]] = {}
-    compiled_code: Optional[Optional[str]] = None
+    compiled_code: Optional[str] = None
     extra_ctes_injected: Optional[bool] = False
     extra_ctes: Optional[List[InjectedCTE]] = []
-    relation_name: Optional[Optional[str]] = None
+    relation_name: Optional[str] = None
 
 
 class ParsedSourceDefinition(BaseModel):
@@ -1563,7 +1561,7 @@ class ParsedSourceDefinition(BaseModel):
         extra = Extra.forbid
 
     fqn: List[str]
-    database: Optional[Optional[str]] = None
+    database: Optional[str] = None
     schema_: str = Field(..., alias='schema')
     unique_id: str
     package_name: str
@@ -1582,18 +1580,18 @@ class ParsedSourceDefinition(BaseModel):
         'identifier': None,
         'column': None,
     }
-    loaded_at_field: Optional[Optional[str]] = None
-    freshness: Optional[Optional[FreshnessThreshold]] = None
-    external: Optional[Optional[ExternalTable]] = None
+    loaded_at_field: Optional[str] = None
+    freshness: Optional[FreshnessThreshold] = None
+    external: Optional[ExternalTable] = None
     description: Optional[str] = ''
     columns: Optional[Dict[str, ColumnInfo]] = {}
     meta: Optional[Dict[str, Any]] = {}
     source_meta: Optional[Dict[str, Any]] = {}
     tags: Optional[List[str]] = []
     config: Optional[SourceConfig] = {'enabled': True}
-    patch_path: Optional[Optional[str]] = None
+    patch_path: Optional[str] = None
     unrendered_config: Optional[Dict[str, Any]] = {}
-    relation_name: Optional[Optional[str]] = None
+    relation_name: Optional[str] = None
     created_at: Optional[float] = 1664991685.825852
 
 
@@ -1675,9 +1673,9 @@ class Model(BaseModel):
             ]
         ]
     ] = Field(None, description='A mapping of the disabled nodes in the target')
-    parent_map: Optional[Optional[Dict[str, List[str]]]] = Field(
+    parent_map: Optional[Dict[str, List[str]]] = Field(
         None, description='A mapping from\xa0child nodes to their dependencies'
     )
-    child_map: Optional[Optional[Dict[str, List[str]]]] = Field(
+    child_map: Optional[Dict[str, List[str]]] = Field(
         None, description='A mapping from parent nodes to their dependents'
     )
