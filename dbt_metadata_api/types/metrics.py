@@ -16,9 +16,6 @@ class MetricFilter:
 
 @strawberry.type
 class MetricNode(NodeInterface):
-    def __post_init__(self) -> None:
-        if self.node.resource_type.value != "metric":
-            raise TypeError("That unique_id is not a metric.")
 
     @property
     def node(self) -> BaseModel:

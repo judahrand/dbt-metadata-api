@@ -1,14 +1,14 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Annotated, Optional
 
 import strawberry
 
-from dbt_metadata_api.types.tests import TestNode
-
 from ..interfaces import NodeInterface
 from .common import CatalogColumn
-from .sources import SourceNode
-from .tests import TestNode
-from .utils import flatten_depends_on
+from .utils import convert_to_strawberry, flatten_depends_on
+
+if TYPE_CHECKING:
+    from .sources import SourceNode
+    from .tests import TestNode
 
 
 @strawberry.type
@@ -65,22 +65,18 @@ class ModelNode(NodeInterface):
     def parents_models(self) -> Optional[list["ModelNode"]]:
         parents = self.manifest.parent_map[self.unique_id]
         return [
-            ModelNode(
-                manifest=self.manifest,
-                unique_id=unique_id,
-            )
+            convert_to_strawberry(self.manifest, unique_id)
             for unique_id in parents
             if self.manifest.nodes[unique_id].resource_type.value == "model"
         ]
 
     @strawberry.field
-    def parents_sources(self) -> Optional[list[SourceNode]]:
+    def parents_sources(
+        self,
+    ) -> Optional[list[Annotated["SourceNode", strawberry.lazy(".sources")]]]:
         parents = self.manifest.parent_map[self.unique_id]
         return [
-            SourceNode(
-                manifest=self.manifest,
-                unique_id=unique_id,
-            )
+            convert_to_strawberry(self.manifest, unique_id)
             for unique_id in parents
             if self.manifest.nodes[unique_id].resource_type.value == "source"
         ]
@@ -100,12 +96,9 @@ class ModelNode(NodeInterface):
         return self.node.schema_
 
     @strawberry.field
-    def tests(self) -> Optional[list[TestNode]]:
+    def tests(self) -> Optional[list[Annotated["TestNode", strawberry.lazy(".tests")]]]:
         return [
-            TestNode(
-                manifest=self.manifest,
-                unique_id=node.unique_id,
-            )
+            convert_to_strawberry(self.manifest, node.unique_id)
             for node in self.manifest.nodes.values()
             if node.resource_type.value == "test"
             and self.unique_id in node.depends_on.nodes
