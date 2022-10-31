@@ -3,14 +3,14 @@ from typing import Optional
 import strawberry
 
 from ..enums import FreshnessStatus
-from ..interfaces import NodeInterface
+from ..interfaces import NodeInterface, dbtCoreInterface
 from ..scalars import DateTime
 from .common import CatalogColumn, CatalogStat, Criteria
 from .tests import TestNode
 
 
 @strawberry.type
-class SourceNode(NodeInterface):
+class SourceNode(NodeInterface, dbtCoreInterface):
     children_l1: Optional[list[str]]
     columns: Optional[CatalogColumn]
     comment: Optional[str]

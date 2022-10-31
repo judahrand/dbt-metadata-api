@@ -2,14 +2,14 @@ from typing import Optional
 
 import strawberry
 
-from ..interfaces import NodeInterface
+from ..interfaces import NodeInterface, dbtCoreInterface
 from .common import CatalogColumn, CatalogStat
 from .models import ModelNode
 from .sources import SourceNode
 
 
 @strawberry.type
-class SnapshotNode(NodeInterface):
+class SnapshotNode(NodeInterface, dbtCoreInterface):
     alias: Optional[str]
     children_l1: Optional[list[str]]
     columns: Optional[list[CatalogColumn]]

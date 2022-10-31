@@ -2,38 +2,32 @@ from typing import Optional
 
 import strawberry
 
-from ..interfaces import NodeInterface
+from ..interfaces import NodeInterface, dbtCoreInterface
 from .utils import flatten_depends_on
 
 
 @strawberry.type
-class TestNode(NodeInterface):
-    def __post_init__(self) -> None:
-        if self.node.resource_type.value != "test":
-            raise TypeError("That unique_id is not a test.")
+class TestNode(NodeInterface, dbtCoreInterface):
+    @strawberry.field
+    def column_name(self, info: strawberry.types.Info) -> Optional[str]:
+        return getattr(self.get_node(info.context["manifest"]), "column_name", None)
 
     @strawberry.field
-    def column_name(self) -> Optional[str]:
-        return getattr(self.node, "column_name", None)
+    def compiled_code(self, info: strawberry.types.Info) -> Optional[str]:
+        return getattr(self.get_node(info.context["manifest"]), "compiled_code", None)
 
     @strawberry.field
-    def compiled_code(self) -> Optional[str]:
-        return self.node.compiled_code
+    def compiled_sql(self, info: strawberry.types.Info) -> Optional[str]:
+        return getattr(self.get_node(info.context["manifest"]), "compiled_sql", None)
 
     @strawberry.field
-    def compiled_sql(self) -> Optional[str]:
-        if getattr(self.node, "language", "sql") == "sql":
-            return self.node.compiled_code
+    def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:
+        return flatten_depends_on(self.get_node(info.context["manifest"]).depends_on)
 
     @strawberry.field
-    def depends_on(self) -> Optional[list[str]]:
-        return flatten_depends_on(self.node.depends_on)
+    def raw_code(self, info: strawberry.types.Info) -> Optional[str]:
+        return getattr(self.get_node(info.context["manifest"]), "raw_code", None)
 
     @strawberry.field
-    def raw_code(self) -> Optional[str]:
-        return self.node.raw_code
-
-    @strawberry.field
-    def raw_sql(self) -> Optional[str]:
-        if getattr(self.node, "language", "sql") == "sql":
-            return self.node.raw_code
+    def raw_sql(self, info: strawberry.types.Info) -> Optional[str]:
+        return getattr(self.get_node(info.context["manifest"]), "raw_sql", None)

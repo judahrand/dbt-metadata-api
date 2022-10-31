@@ -1,8 +1,11 @@
 from typing import TYPE_CHECKING, Annotated, Optional
 
 import strawberry
+from pydantic import BaseModel
 
-from ..interfaces import NodeInterface
+from dbt_metadata_api.utils import Manifest
+
+from ..interfaces import NodeInterface, dbtCoreInterface
 from .common import CatalogColumn
 from .utils import convert_to_strawberry, flatten_depends_on
 
@@ -12,21 +15,23 @@ if TYPE_CHECKING:
 
 
 @strawberry.type
-class ModelNode(NodeInterface):
-    def __post_init__(self) -> None:
-        if self.node.resource_type.value != "model":
+class ModelNode(NodeInterface, dbtCoreInterface):
+    def get_node(self, manifest: Manifest) -> BaseModel:
+        node = super().get_node(manifest)
+        if node.resource_type.name != "model":
             raise TypeError("That unique_id is not a model.")
+        return node
 
     @strawberry.field
-    def alias(self) -> Optional[str]:
-        return self.node.alias
+    def alias(self, info: strawberry.types.Info) -> Optional[str]:
+        return self.get_node(info.context["manifest"]).alias
 
     @strawberry.field
-    def children_l1(self) -> Optional[list[str]]:
-        return self.manifest.child_map[self.unique_id]
+    def children_l1(self, info: strawberry.types.Info) -> Optional[list[str]]:
+        return info.context["manifest"].child_map[self.unique_id]
 
     @strawberry.field
-    def columns(self) -> Optional[list[CatalogColumn]]:
+    def columns(self, info: strawberry.types.Info) -> Optional[list[CatalogColumn]]:
         return [
             CatalogColumn(
                 name=col.name,
@@ -36,70 +41,80 @@ class ModelNode(NodeInterface):
                 tags=col.tags,
                 type=col.data_type,
             )
-            for idx, col in enumerate(self.node.columns.values())
+            for idx, col in enumerate(
+                self.get_node(info.context["manifest"]).columns.values()
+            )
         ]
 
     @strawberry.field
-    def compiled_code(self) -> Optional[str]:
-        return self.node.compiled_code
+    def compiled_code(self, info: strawberry.types.Info) -> Optional[str]:
+        return getattr(self.get_node(info.context["manifest"]), "compiled_code", None)
 
     @strawberry.field
-    def compiled_sql(self) -> Optional[str]:
-        if getattr(self.node, "language", "sql") == "sql":
-            return self.compiled_code()
-        return None
+    def compiled_sql(self, info: strawberry.types.Info) -> Optional[str]:
+        return getattr(self.get_node(info.context["manifest"]), "compiled_sql", None)
 
     @strawberry.field
-    def database(self) -> Optional[str]:
-        return self.node.database
+    def database(self, info: strawberry.types.Info) -> Optional[str]:
+        return self.get_node(info.context["manifest"]).database
 
     @strawberry.field
-    def depends_on(self) -> Optional[list[str]]:
-        return flatten_depends_on(self.node.depends_on)
+    def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:
+        if not isinstance(self.get_node(info.context["manifest"]).depends_on, list):
+            return flatten_depends_on(
+                self.get_node(info.context["manifest"]).depends_on
+            )
+        return self.get_node(info.context["manifest"]).depends_on
 
     @strawberry.field
-    def materialized_type(self) -> Optional[str]:
-        return self.node.config.materialized
+    def materialized_type(self, info: strawberry.types.Info) -> Optional[str]:
+        return self.get_node(info.context["manifest"]).config.materialized
 
     @strawberry.field
-    def parents_models(self) -> Optional[list["ModelNode"]]:
-        parents = self.manifest.parent_map[self.unique_id]
+    def parents_models(
+        self, info: strawberry.types.Info
+    ) -> Optional[list["ModelNode"]]:
+        manifest = info.context["manifest"]
+        parents = manifest.parent_map[self.unique_id]
         return [
-            convert_to_strawberry(self.manifest, unique_id)
+            convert_to_strawberry(unique_id, "model")
             for unique_id in parents
-            if self.manifest.nodes[unique_id].resource_type.value == "model"
+            if manifest.nodes[unique_id].resource_type.name == "model"
         ]
 
     @strawberry.field
     def parents_sources(
         self,
+        info: strawberry.types.Info,
     ) -> Optional[list[Annotated["SourceNode", strawberry.lazy(".sources")]]]:
-        parents = self.manifest.parent_map[self.unique_id]
+        manifest = info.context["manifest"]
+        parents = manifest.parent_map[self.unique_id]
         return [
-            convert_to_strawberry(self.manifest, unique_id)
+            convert_to_strawberry(unique_id, "source")
             for unique_id in parents
-            if self.manifest.nodes[unique_id].resource_type.value == "source"
+            if manifest.nodes[unique_id].resource_type.name == "source"
         ]
 
     @strawberry.field
-    def raw_code(self) -> Optional[str]:
-        return self.node.raw_code
+    def raw_code(self, info: strawberry.types.Info) -> Optional[str]:
+        return getattr(self.get_node(info.context["manifest"]), "raw_code", None)
 
     @strawberry.field
-    def raw_sql(self) -> Optional[str]:
-        if getattr(self.node, "language", "sql") == "sql":
-            return self.raw_code()
-        return None
+    def raw_sql(self, info: strawberry.types.Info) -> Optional[str]:
+        return getattr(self.get_node(info.context["manifest"]), "raw_sql", None)
 
     @strawberry.field
-    def schema(self) -> Optional[str]:
-        return self.node.schema_
+    def schema(self, info: strawberry.types.Info) -> Optional[str]:
+        return self.get_node(info.context["manifest"]).schema_
 
     @strawberry.field
-    def tests(self) -> Optional[list[Annotated["TestNode", strawberry.lazy(".tests")]]]:
+    def tests(
+        self, info: strawberry.types.Info
+    ) -> Optional[list[Annotated["TestNode", strawberry.lazy(".tests")]]]:
+        manifest = info.context["manifest"]
         return [
-            convert_to_strawberry(self.manifest, node.unique_id)
-            for node in self.manifest.nodes.values()
-            if node.resource_type.value == "test"
+            convert_to_strawberry(unique_id, "test")
+            for unique_id, node in manifest.nodes.items()
+            if node.resource_type.name == "test"
             and self.unique_id in node.depends_on.nodes
         ]

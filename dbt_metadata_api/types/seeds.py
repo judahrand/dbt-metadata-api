@@ -2,12 +2,12 @@ from typing import Optional
 
 import strawberry
 
-from ..interfaces import NodeInterface
+from ..interfaces import NodeInterface, dbtCoreInterface
 from .common import CatalogColumn, CatalogStat
 
 
 @strawberry.type
-class SeedNode(NodeInterface):
+class SeedNode(NodeInterface, dbtCoreInterface):
     alias: Optional[str]
     children_l1: Optional[str]
     columns: Optional[CatalogColumn]
