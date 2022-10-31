@@ -1,10 +1,10 @@
 from typing import Optional
 
 import strawberry
+import strawberry.types
 from pydantic import BaseModel
 
 from .scalars import DateTime, JSONObject
-from .utils import get_manifest
 
 
 @strawberry.interface(description="The manifest metadata associated with this node")
@@ -12,40 +12,40 @@ class dbtCoreInterface:
     manifest: strawberry.Private[BaseModel]
 
     @strawberry.field
-    def dbt_schema_version(self) -> str:
-        return get_manifest().metadata.dbt_schema_version
+    def dbt_schema_version(self, info: strawberry.types.Info) -> str:
+        return info.context["manifest"].metadata.dbt_schema_version
 
     @strawberry.field
-    def dbt_version(self) -> str:
-        return get_manifest().metadata.dbt_version
+    def dbt_version(self, info: strawberry.types.Info) -> str:
+        return info.context["manifest"].metadata.dbt_version
 
     @strawberry.field
-    def generated_at(self) -> DateTime:
-        return DateTime(get_manifest().metadata.generated_at)
+    def generated_at(self, info: strawberry.types.Info) -> DateTime:
+        return DateTime(info.context["manifest"].metadata.generated_at)
 
     @strawberry.field
-    def invocation_id(self) -> str:
-        return get_manifest().metadata.invocation_id
+    def invocation_id(self, info: strawberry.types.Info) -> str:
+        return info.context["manifest"].metadata.invocation_id
 
     @strawberry.field
-    def env(self) -> Optional[JSONObject]:
-        return JSONObject(get_manifest().metadata.env)
+    def env(self, info: strawberry.types.Info) -> Optional[JSONObject]:
+        return JSONObject(info.context["manifest"].metadata.env)
 
     @strawberry.field
-    def project_id(self) -> Optional[str]:
-        return get_manifest().metadata.project_id
+    def project_id(self, info: strawberry.types.Info) -> Optional[str]:
+        return info.context["manifest"].metadata.project_id
 
     @strawberry.field
-    def user_id(self) -> Optional[str]:
-        return get_manifest().metadata.user_id
+    def user_id(self, info: strawberry.types.Info) -> Optional[str]:
+        return info.context["manifest"].metadata.user_id
 
     @strawberry.field
-    def send_anonymous_usage_stats(self) -> Optional[bool]:
-        return get_manifest().metadata.send_anonymous_usage_stats
+    def send_anonymous_usage_stats(self, info: strawberry.types.Info) -> Optional[bool]:
+        return info.context["manifest"].metadata.send_anonymous_usage_stats
 
     @strawberry.field
-    def adapter_type(self) -> Optional[str]:
-        return get_manifest().metadata.adapter_type
+    def adapter_type(self, info: strawberry.types.Info) -> Optional[str]:
+        return info.context["manifest"].metadata.adapter_type
 
 
 @strawberry.interface

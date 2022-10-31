@@ -1,7 +1,7 @@
-from re import M
 from typing import Annotated
 
 import strawberry
+import strawberry.types
 
 from .types import (
     ExposureNode,
@@ -14,14 +14,13 @@ from .types import (
     TestNode,
     convert_to_strawberry,
 )
-from .utils import get_manifest
 
 
 @strawberry.type
 class Query:
     @strawberry.field
-    def exposures(self) -> list[ExposureNode]:
-        manifest = get_manifest()
+    def exposures(self, info: strawberry.types.Info) -> list[ExposureNode]:
+        manifest = info.context["manifest"]
         return [
             convert_to_strawberry(manifest, node)
             for node in manifest.exposures.values()
@@ -33,16 +32,16 @@ class Query:
         unique_id: Annotated[
             str, strawberry.argument(description="The unique_id of this exposure")
         ],
+        info: strawberry.types.Info,
     ) -> ExposureNode:
-        manifest = get_manifest()
+        manifest = info.context["manifest"]
         return convert_to_strawberry(manifest, manifest.exposures[unique_id])
 
     @strawberry.field
-    def macros(self) -> list[MacroNode]:
-        manifest = get_manifest()
+    def macros(self, info: strawberry.types.Info) -> list[MacroNode]:
+        manifest = info.context["manifest"]
         return [
-            convert_to_strawberry(manifest, node)
-            for node in manifest.macros.values()
+            convert_to_strawberry(manifest, node) for node in manifest.macros.values()
         ]
 
     @strawberry.field
@@ -52,16 +51,17 @@ class Query:
             str,
             strawberry.argument(description="The unique ID of this particular macro"),
         ],
+        info: strawberry.types.Info,
     ) -> MacroNode:
-        manifest = get_manifest()
+        manifest = info.context["manifest"]
         return convert_to_strawberry(
             manifest,
             manifest.macros[unique_id],
         )
 
     @strawberry.field
-    def metrics(self) -> list[MetricNode]:
-        manifest = get_manifest()
+    def metrics(self, info: strawberry.types.Info) -> list[MetricNode]:
+        manifest = info.context["manifest"]
         return [
             convert_to_strawberry(manifest, unique_id)
             for unique_id in manifest.metrics.values()
@@ -74,13 +74,14 @@ class Query:
             str,
             strawberry.argument(description="The unique ID of this particular metric"),
         ],
+        info: strawberry.types.Info,
     ) -> MetricNode:
-        manifest = get_manifest()
+        manifest = info.context["manifest"]
         return convert_to_strawberry(manifest, manifest.metrics[unique_id])
 
     @strawberry.field
-    def models(self) -> list[ModelNode]:
-        manifest = get_manifest()
+    def models(self, info: strawberry.types.Info) -> list[ModelNode]:
+        manifest = info.context["manifest"]
         return [
             convert_to_strawberry(manifest, node)
             for node in manifest.nodes.values()
@@ -94,8 +95,9 @@ class Query:
             str,
             strawberry.argument(description="The unique ID of this particular model"),
         ],
+        info: strawberry.types.Info,
     ) -> ModelNode:
-        manifest = get_manifest()
+        manifest = info.context["manifest"]
         return convert_to_strawberry(
             manifest,
             manifest.nodes[unique_id],
@@ -103,10 +105,10 @@ class Query:
         )
 
     # @strawberry.field
-    # def seeds(self) -> list[SeedNode]:
+    # def seeds(self, info: strawberry.types.Info) -> list[SeedNode]:
     #     return [
     #         SeedNode.from_pydantic(node)
-    #         for node in get_manifest().nodes.values()
+    #         for node in info.context["manifest"].nodes.values()
     #         if node.resource_type.value == "seed"
     #     ]
 
@@ -118,16 +120,16 @@ class Query:
     #         strawberry.argument(description="The unique ID of this particular seed"),
     #     ],
     # ) -> SeedNode:
-    #     node = get_manifest().nodes[unique_id]
+    #     node = info.context["manifest"].nodes[unique_id]
     #     if node.resource_type.value == "seed":
     #         raise ValueError(f"No seed called {unique_id} found")
     #     return SeedNode.from_pydantic(node)
 
     # @strawberry.field
-    # def snapshots(self) -> list[SnapshotNode]:
+    # def snapshots(self, info: strawberry.types.Info) -> list[SnapshotNode]:
     #     return [
     #         SnapshotNode.from_pydantic(node)
-    #         for node in get_manifest().nodes.values()
+    #         for node in info.context["manifest"].nodes.values()
     #         if node.resource_type.value == "snapshot"
     #     ]
 
@@ -139,16 +141,16 @@ class Query:
     #         strawberry.argument(description="The unique ID of this particular model"),
     #     ],
     # ) -> SnapshotNode:
-    #     node = get_manifest().nodes[unique_id]
+    #     node = info.context["manifest"].nodes[unique_id]
     #     if node.resource_type.value == "snapshot":
     #         raise ValueError(f"No snapshot called {unique_id} found")
     #     return SeedNode.from_pydantic(node)
 
     # @strawberry.field
-    # def sources(self) -> list[SourceNode]:
+    # def sources(self, info: strawberry.types.Info) -> list[SourceNode]:
     #     return [
     #         SourceNode.from_pydantic(node)
-    #         for node in get_manifest().nodes.values()
+    #         for node in info.context["manifest"].nodes.values()
     #         if node.resource_type.value == "source"
     #     ]
 
@@ -160,14 +162,14 @@ class Query:
     #         strawberry.argument(description="The unique ID of this particular source"),
     #     ],
     # ) -> SourceNode:
-    #     node = get_manifest().nodes[unique_id]
+    #     node = info.context["manifest"].nodes[unique_id]
     #     if node.resource_type.value == "source":
     #         raise ValueError(f"No source called {unique_id} found")
     #     return SourceNode.from_pydantic(node)
 
     @strawberry.field
-    def tests(self) -> list[TestNode]:
-        manifest = get_manifest()
+    def tests(self, info: strawberry.types.Info) -> list[TestNode]:
+        manifest = info.context["manifest"]
         return [
             convert_to_strawberry(manifest, node)
             for node in manifest.nodes.values()
@@ -181,8 +183,9 @@ class Query:
             str,
             strawberry.argument(description="The unique ID of this particular test"),
         ],
+        info: strawberry.types.Info,
     ) -> TestNode:
-        manifest = get_manifest()
+        manifest = info.context["manifest"]
         return convert_to_strawberry(
             manifest,
             manifest.nodes[unique_id],

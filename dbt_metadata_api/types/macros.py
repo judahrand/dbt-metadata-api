@@ -1,7 +1,7 @@
 from typing import Optional
-from pydantic import BaseModel
 
 import strawberry
+from pydantic import BaseModel
 
 from ..interfaces import NodeInterface
 from .utils import flatten_depends_on
@@ -9,7 +9,6 @@ from .utils import flatten_depends_on
 
 @strawberry.type
 class MacroNode(NodeInterface):
-
     @property
     def node(self) -> BaseModel:
         return self.manifest.macros[self.unique_id]

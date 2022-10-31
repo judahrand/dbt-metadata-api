@@ -1,7 +1,7 @@
 from typing import Optional
-from pydantic import BaseModel
 
 import strawberry
+from pydantic import BaseModel
 
 from ..interfaces import NodeInterface
 from ..scalars import DateTime
@@ -12,7 +12,6 @@ from .utils import convert_to_strawberry, flatten_depends_on
 
 @strawberry.type
 class ExposureNode(NodeInterface):
-
     @property
     def node(self) -> BaseModel:
         return self.manifest.exposures[self.unique_id]

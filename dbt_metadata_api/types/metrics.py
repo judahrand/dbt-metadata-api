@@ -16,7 +16,6 @@ class MetricFilter:
 
 @strawberry.type
 class MetricNode(NodeInterface):
-
     @property
     def node(self) -> BaseModel:
         return self.manifest.metrics[self.unique_id]
