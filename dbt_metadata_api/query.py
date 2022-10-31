@@ -111,47 +111,42 @@ class Query:
     ) -> SeedNode:
         return convert_to_strawberry(unique_id, "seed")
 
-    # @strawberry.field
-    # def snapshots(self, info: strawberry.types.Info) -> list[SnapshotNode]:
-    #     return [
-    #         SnapshotNode.from_pydantic(node)
-    #         for node in info.context["manifest"].nodes.values()
-    #         if node.resource_type.name == "snapshot"
-    #     ]
+    @strawberry.field
+    def snapshots(self, info: strawberry.types.Info) -> list[SnapshotNode]:
+        manifest = info.context["manifest"]
+        return [
+            convert_to_strawberry(unique_id, "snapshot")
+            for unique_id, node in manifest.nodes.items()
+            if node.resource_type.name == "snapshot"
+        ]
 
-    # @strawberry.field
-    # def snapshot(
-    #     self,
-    #     unique_id: Annotated[
-    #         str,
-    #         strawberry.argument(description="The unique ID of this particular model"),
-    #     ],
-    # ) -> SnapshotNode:
-    #     node = info.context["manifest"].nodes[unique_id]
-    #     if node.resource_type.name == "snapshot":
-    #         raise ValueError(f"No snapshot called {unique_id} found")
-    #     return SeedNode.from_pydantic(node)
+    @strawberry.field
+    def snapshot(
+        self,
+        unique_id: Annotated[
+            str,
+            strawberry.argument(description="The unique ID of this particular model"),
+        ],
+    ) -> SnapshotNode:
+        return convert_to_strawberry(unique_id, "snapshot")
 
-    # @strawberry.field
-    # def sources(self, info: strawberry.types.Info) -> list[SourceNode]:
-    #     return [
-    #         SourceNode.from_pydantic(node)
-    #         for node in info.context["manifest"].nodes.values()
-    #         if node.resource_type.name == "source"
-    #     ]
+    @strawberry.field
+    def sources(self, info: strawberry.types.Info) -> list[SourceNode]:
+        manifest = info.context["manifest"]
+        return [
+            convert_to_strawberry(unique_id, "source")
+            for unique_id in manifest.sources.values()
+        ]
 
-    # @strawberry.field
-    # def source(
-    #     self,
-    #     unique_id: Annotated[
-    #         str,
-    #         strawberry.argument(description="The unique ID of this particular source"),
-    #     ],
-    # ) -> SourceNode:
-    #     node = info.context["manifest"].nodes[unique_id]
-    #     if node.resource_type.name == "source":
-    #         raise ValueError(f"No source called {unique_id} found")
-    #     return SourceNode.from_pydantic(node)
+    @strawberry.field
+    def source(
+        self,
+        unique_id: Annotated[
+            str,
+            strawberry.argument(description="The unique ID of this particular source"),
+        ],
+    ) -> SourceNode:
+        return convert_to_strawberry(unique_id, "source")
 
     @strawberry.field
     def tests(self, info: strawberry.types.Info) -> list[TestNode]:
