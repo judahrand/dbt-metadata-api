@@ -1,9 +1,6 @@
 from typing import TYPE_CHECKING, Annotated, Optional
 
 import strawberry
-from pydantic import BaseModel
-
-from dbt_metadata_api.utils import Manifest
 
 from ..interfaces import NodeInterface, dbtCoreInterface
 from .common import CatalogColumn
@@ -16,11 +13,7 @@ if TYPE_CHECKING:
 
 @strawberry.type
 class ModelNode(NodeInterface, dbtCoreInterface):
-    def get_node(self, manifest: Manifest) -> BaseModel:
-        node = super().get_node(manifest)
-        if node.resource_type.name != "model":
-            raise TypeError("That unique_id is not a model.")
-        return node
+    _resource_type: strawberry.Private[str] = "model"
 
     @strawberry.field
     def alias(self, info: strawberry.types.Info) -> Optional[str]:

@@ -49,10 +49,17 @@ class dbtCoreInterface:
 
 @strawberry.interface
 class NodeInterface:
+    _resource_type: strawberry.Private[str]
 
     unique_id: str = strawberry.field(
         description="The unique id name of this particular node"
     )
+
+    def get_node(self, manifest: Manifest) -> BaseModel:
+        node = manifest.nodes[self.unique_id]
+        if node.resource_type.name != self._resource_type:
+            raise TypeError(f"That unique_id is not a {self._resource_type}.")
+        return node
 
     def get_node(self, manifest: Manifest) -> BaseModel:
         return manifest.nodes[self.unique_id]

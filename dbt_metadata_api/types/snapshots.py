@@ -10,6 +10,8 @@ from .sources import SourceNode
 
 @strawberry.type
 class SnapshotNode(NodeInterface, dbtCoreInterface):
+    _resource_type: strawberry.Private[str] = "snapshot"
+
     alias: Optional[str]
     children_l1: Optional[list[str]]
     columns: Optional[list[CatalogColumn]]

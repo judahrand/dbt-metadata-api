@@ -10,11 +10,10 @@ from .utils import flatten_depends_on
 
 @strawberry.type
 class MacroNode(NodeInterface, dbtCoreInterface):
+    _resource_type: strawberry.Private[str] = "macro"
+
     def get_node(self, manifest: Manifest) -> BaseModel:
-        node = super().get_node(manifest)
-        if node.resource_type.name != "macro":
-            raise TypeError("That unique_id is not a macro.")
-        return node
+        node = manifest.macros[self.unique_id]
 
     @strawberry.field
     def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:

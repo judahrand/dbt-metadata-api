@@ -11,6 +11,8 @@ from .tests import TestNode
 
 @strawberry.type
 class SourceNode(NodeInterface, dbtCoreInterface):
+    _resource_type: strawberry.Private[str] = "source"
+
     children_l1: Optional[list[str]]
     columns: Optional[CatalogColumn]
     comment: Optional[str]

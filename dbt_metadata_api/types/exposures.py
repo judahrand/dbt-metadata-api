@@ -13,11 +13,10 @@ from .utils import convert_to_strawberry, flatten_depends_on
 
 @strawberry.type
 class ExposureNode(NodeInterface, dbtCoreInterface):
+    _resource_type: strawberry.Private[str] = "exposure"
+
     def get_node(self, manifest: Manifest) -> BaseModel:
-        node = super().get_node(manifest)
-        if node.resource_type.name != "exposure":
-            raise TypeError("That unique_id is not an exposure.")
-        return node
+        return manifest.exposures[self.unique_id]
 
     @strawberry.field
     def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:

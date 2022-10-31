@@ -8,6 +8,8 @@ from .common import CatalogColumn, CatalogStat
 
 @strawberry.type
 class SeedNode(NodeInterface, dbtCoreInterface):
+    _resource_type: strawberry.Private[str] = "seed"
+
     alias: Optional[str]
     children_l1: Optional[str]
     columns: Optional[CatalogColumn]

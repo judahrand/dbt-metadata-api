@@ -8,6 +8,8 @@ from .utils import flatten_depends_on
 
 @strawberry.type
 class TestNode(NodeInterface, dbtCoreInterface):
+    _resource_type: strawberry.Private[str] = "test"
+
     @strawberry.field
     def column_name(self, info: strawberry.types.Info) -> Optional[str]:
         return getattr(self.get_node(info.context["manifest"]), "column_name", None)

@@ -17,6 +17,8 @@ class MetricFilter:
 
 @strawberry.type
 class MetricNode(NodeInterface, dbtCoreInterface):
+    _resource_type: strawberry.Private[str] = "metric"
+
     def get_node(self, manifest: Manifest) -> BaseModel:
         return manifest.metrics[self.unique_id]
 
