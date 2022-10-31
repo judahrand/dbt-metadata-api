@@ -90,29 +90,26 @@ class Query:
         ],
         info: strawberry.types.Info,
     ) -> ModelNode:
-        manifest = info.context["manifest"]
         return convert_to_strawberry(unique_id, "model")
 
-    # @strawberry.field
-    # def seeds(self, info: strawberry.types.Info) -> list[SeedNode]:
-    #     return [
-    #         SeedNode.from_pydantic(node)
-    #         for node in info.context["manifest"].nodes.values()
-    #         if node.resource_type.name == "seed"
-    #     ]
+    @strawberry.field
+    def seeds(self, info: strawberry.types.Info) -> list[SeedNode]:
+        manifest = info.context["manifest"]
+        return [
+            convert_to_strawberry(unique_id, "seed")
+            for unique_id, node in manifest.nodes.items()
+            if node.resource_type.name == "seed"
+        ]
 
-    # @strawberry.field
-    # def seed(
-    #     self,
-    #     unique_id: Annotated[
-    #         str,
-    #         strawberry.argument(description="The unique ID of this particular seed"),
-    #     ],
-    # ) -> SeedNode:
-    #     node = info.context["manifest"].nodes[unique_id]
-    #     if node.resource_type.name == "seed":
-    #         raise ValueError(f"No seed called {unique_id} found")
-    #     return SeedNode.from_pydantic(node)
+    @strawberry.field
+    def seed(
+        self,
+        unique_id: Annotated[
+            str,
+            strawberry.argument(description="The unique ID of this particular seed"),
+        ],
+    ) -> SeedNode:
+        return convert_to_strawberry(unique_id, "seed")
 
     # @strawberry.field
     # def snapshots(self, info: strawberry.types.Info) -> list[SnapshotNode]:
