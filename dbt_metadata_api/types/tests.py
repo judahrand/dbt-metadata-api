@@ -7,8 +7,8 @@ from dbt.contracts.graph.compiled import (
 )
 from dbt.contracts.graph.parsed import ParsedGenericTestNode, ParsedSingularTestNode
 
-from ..interfaces import NodeInterface, dbtCoreInterface
-from ..utils import get_manifest
+from dbt_metadata_api.interfaces import NodeInterface, dbtCoreInterface
+from dbt_metadata_api.utils import get_manifest
 
 
 @strawberry.type
@@ -37,7 +37,7 @@ class TestNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def column_name(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(info), "column_name", None)
+        return self.get_node(info).column_name
 
     @strawberry.field
     def compiled_code(self, info: strawberry.types.Info) -> Optional[str]:
@@ -45,7 +45,8 @@ class TestNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def compiled_sql(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.compiled_code()
+        if self.get_node(info).language == "sql":
+            return self.compiled_code(info)
 
     @strawberry.field
     def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:
@@ -57,4 +58,5 @@ class TestNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def raw_sql(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.raw_code()
+        if self.get_node(info).language == "sql":
+            return self.raw_code(info)

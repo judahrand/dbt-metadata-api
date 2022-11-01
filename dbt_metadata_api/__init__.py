@@ -1,16 +1,17 @@
 import asyncio
+import pathlib
 
 import strawberry
 from fastapi import Depends, FastAPI
 from strawberry.fastapi import GraphQLRouter
 
 from .query import Query
-from .utils import MANIFEST_PATH, Manifest, ManifestLoader
+from .utils import ManifestLoader
 
-MANIFEST_LOADER = ManifestLoader(MANIFEST_PATH)
+MANIFEST_LOADER = ManifestLoader(pathlib.Path("manifest_v7.json"))
 
 
-def get_context(manifest: Manifest = Depends(MANIFEST_LOADER.current)):
+def get_context(manifest=Depends(MANIFEST_LOADER.current)):
     return {"manifest": manifest}
 
 

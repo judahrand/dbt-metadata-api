@@ -4,8 +4,8 @@ import strawberry
 import strawberry.types
 from dbt.contracts.graph.parsed import ParsedMacro
 
-from ..interfaces import NodeInterface, dbtCoreInterface
-from ..utils import get_manifest
+from dbt_metadata_api.interfaces import NodeInterface, dbtCoreInterface
+from dbt_metadata_api.utils import get_manifest
 
 
 @strawberry.type

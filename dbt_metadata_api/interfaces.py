@@ -57,7 +57,7 @@ class NodeInterface:
 
     @strawberry.field(description="The resource type of this node")
     def resource_type(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info).resource_type.name
+        return self.get_node(info).resource_type
 
     @strawberry.field(description="The package name of this node")
     def package_name(self, info: strawberry.types.Info) -> Optional[str]:

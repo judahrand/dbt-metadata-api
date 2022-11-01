@@ -5,9 +5,11 @@ import strawberry.types
 from dbt.contracts.graph.compiled import CompiledSeedNode
 from dbt.contracts.graph.parsed import ParsedSeedNode
 
-from ..interfaces import NodeInterface, dbtCoreInterface
-from ..utils import get_manifest
+from dbt_metadata_api.interfaces import NodeInterface, dbtCoreInterface
+from dbt_metadata_api.utils import get_manifest
+
 from .common import CatalogColumn
+from .utils import get_column_catalogs
 
 
 @strawberry.type
@@ -26,38 +28,20 @@ class SeedNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def children_l1(self, info: strawberry.types.Info) -> Optional[str]:
-        manifest = get_manifest(info)
-        return manifest.child_map[self.unique_id]
+        return get_manifest(info).child_map[self.unique_id]
 
     @strawberry.field
     def columns(self, info: strawberry.types.Info) -> Optional[list[CatalogColumn]]:
-        return [
-            CatalogColumn(
-                name=col.name,
-                index=idx,
-                description=col.description,
-                meta=col.meta,
-                tags=col.tags,
-                type=col.data_type,
-            )
-            for idx, col in enumerate(self.get_node(info).columns.values())
-        ]
+        return get_column_catalogs(self.get_node(info).columns)
 
     @strawberry.field
     def compiled_code(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(
-            self.get_node(info),
-            "compiled_code",
-            None,
-        )
+        return self.get_node(info).compiled_code
 
     @strawberry.field
     def compiled_sql(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(
-            self.get_node(info),
-            "compiled_sql",
-            None,
-        )
+        if self.get_node(info).language == "sql":
+            return self.compiled_code(info)
 
     @strawberry.field
     def database(self, info: strawberry.types.Info) -> Optional[str]:
@@ -65,20 +49,13 @@ class SeedNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def raw_code(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(
-            self.get_node(info),
-            "raw_code",
-            None,
-        )
+        return self.get_node(info).raw_code
 
     @strawberry.field
     def raw_sql(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(
-            self.get_node(info),
-            "raw_sql",
-            None,
-        )
+        if self.get_node(info).language == "sql":
+            return self.raw_sql(info)
 
     @strawberry.field
     def schema(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info).schema_
+        return self.get_node(info).schema

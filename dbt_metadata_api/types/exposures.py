@@ -4,12 +4,13 @@ import strawberry
 import strawberry.types
 from dbt.contracts.graph.parsed import ParsedExposure
 
-from ..interfaces import NodeInterface, dbtCoreInterface
-from ..scalars import DateTime
-from ..utils import get_manifest
+from dbt_metadata_api.interfaces import NodeInterface, dbtCoreInterface
+from dbt_metadata_api.scalars import DateTime
+from dbt_metadata_api.utils import get_manifest
+
 from .models import ModelNode
 from .sources import SourceNode
-from .utils import convert_to_strawberry
+from .utils import get_parents
 
 
 @strawberry.type
@@ -42,28 +43,18 @@ class ExposureNode(NodeInterface, dbtCoreInterface):
         return self.get_node(info).owner.name
 
     @strawberry.field
-    def parents(self, info: strawberry.types.Info) -> Optional[list[NodeInterface]]:
-        manifest = get_manifest(info)
-        return [
-            convert_to_strawberry(
-                unique_id, manifest.nodes[unique_id].resource_type.name
-            )
-            for unique_id in manifest.parent_map[self.unique_id]
-        ]
-
-    @strawberry.field
     def parents_models(self, info: strawberry.types.Info) -> Optional[list[ModelNode]]:
-        return [
-            node for node in self.parents() if isinstance(node.resource_type, ModelNode)
-        ]
+        return get_parents(
+            self.unique_id, get_manifest(info), resource_types=("model",)
+        )
 
     @strawberry.field
     def parents_sources(
         self, info: strawberry.types.Info
     ) -> Optional[list[SourceNode]]:
-        return [
-            node for node in self.parents if isinstance(node.resource_type, SourceNode)
-        ]
+        return get_parents(
+            self.unique_id, get_manifest(info), resource_types=("source",)
+        )
 
     @strawberry.field
     def url(self, info: strawberry.types.Info) -> Optional[str]:

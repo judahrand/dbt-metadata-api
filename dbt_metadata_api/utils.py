@@ -30,4 +30,4 @@ class ManifestLoader:
 
 
 def get_manifest(info: strawberry.types.Info) -> WritableManifest:
-    return cast(info.context["manifest"], WritableManifest)
+    return cast(WritableManifest, info.context["manifest"])

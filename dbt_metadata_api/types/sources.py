@@ -4,9 +4,10 @@ import strawberry
 import strawberry.types
 from dbt.contracts.graph.parsed import ParsedSourceDefinition
 
+from dbt_metadata_api.interfaces import NodeInterface, dbtCoreInterface
+from dbt_metadata_api.utils import get_manifest
+
 from ..enums import TimePeriod
-from ..interfaces import NodeInterface, dbtCoreInterface
-from ..utils import get_manifest
 from .common import CatalogColumn, Criteria, CriteriaInfo
 
 
@@ -62,7 +63,7 @@ class SourceNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def schema(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info).schema_
+        return self.get_node(info).schema
 
     @strawberry.field
     def source_description(self, info: strawberry.types.Info) -> Optional[str]:

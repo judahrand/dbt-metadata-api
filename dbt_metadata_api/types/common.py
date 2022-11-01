@@ -2,8 +2,9 @@ from typing import Optional
 
 import strawberry
 
+from dbt_metadata_api.scalars import AnyScalar, JSONObject
+
 from ..enums import TimePeriod
-from ..scalars import AnyScalar, JSONObject
 
 
 @strawberry.type

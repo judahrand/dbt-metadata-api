@@ -79,7 +79,7 @@ class Query:
         return [
             convert_to_strawberry(unique_id, "model")
             for unique_id, node in manifest.nodes.items()
-            if node.resource_type.name == "model"
+            if node.resource_type == "model"
         ]
 
     @strawberry.field
@@ -99,7 +99,7 @@ class Query:
         return [
             convert_to_strawberry(unique_id, "seed")
             for unique_id, node in manifest.nodes.items()
-            if node.resource_type.name == "seed"
+            if node.resource_type == "seed"
         ]
 
     @strawberry.field
@@ -118,7 +118,7 @@ class Query:
         return [
             convert_to_strawberry(unique_id, "snapshot")
             for unique_id, node in manifest.nodes.items()
-            if node.resource_type.name == "snapshot"
+            if node.resource_type == "snapshot"
         ]
 
     @strawberry.field
@@ -155,7 +155,7 @@ class Query:
         return [
             convert_to_strawberry(unique_id, "test")
             for unique_id, node in manifest.nodes.items()
-            if node.resource_type.name == "test"
+            if node.resource_type == "test"
         ]
 
     @strawberry.field

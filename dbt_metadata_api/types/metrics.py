@@ -4,8 +4,8 @@ import strawberry
 import strawberry.types
 from dbt.contracts.graph.parsed import ParsedMetric
 
-from ..interfaces import NodeInterface, dbtCoreInterface
-from ..utils import get_manifest
+from dbt_metadata_api.interfaces import NodeInterface, dbtCoreInterface
+from dbt_metadata_api.utils import get_manifest
 
 
 @strawberry.type
@@ -22,7 +22,7 @@ class MetricNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def calculation_method(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(info), "calculation_method", None)
+        return self.get_node(info).calculation_method
 
     @strawberry.field
     def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:
@@ -34,7 +34,7 @@ class MetricNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def expression(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(info), "expression", None)
+        return self.get_node(info).expression
 
     @strawberry.field
     def filters(self, info: strawberry.types.Info) -> Optional[list[MetricFilter]]:
@@ -57,7 +57,7 @@ class MetricNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def sql(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(info), "sql", None)
+        return self.expression(info)
 
     @strawberry.field
     def time_grains(self, info: strawberry.types.Info) -> Optional[list[str]]:
