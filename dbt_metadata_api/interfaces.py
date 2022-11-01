@@ -70,13 +70,19 @@ class NodeInterface:
         return self.get_node(info).name
 
     @strawberry.field(
-        description='Relative file path of this resource\'s definition within its "resource path"',
+        description=(
+            "Relative file path of this resource's definition within "
+            "its \"resource path\""
+        ),
     )
     def path(self, info: strawberry.types.Info) -> Optional[str]:
         return self.get_node(info).path
 
     @strawberry.field(
-        description="Relative file path of this resource's definition, including its resource path.",
+        description=(
+            "Relative file path of this resource's definition, including "
+            "its resource path."
+        ),
     )
     def original_file_path(self, info: strawberry.types.Info) -> Optional[str]:
         return self.get_node(info).original_file_path
