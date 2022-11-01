@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 import strawberry
@@ -5,7 +6,6 @@ import strawberry.types
 from dbt.contracts.graph.parsed import ParsedExposure
 
 from dbt_metadata_api.interfaces import NodeInterface, dbtCoreInterface
-from dbt_metadata_api.scalars import DateTime
 from dbt_metadata_api.utils import get_manifest
 
 from .models import ModelNode
@@ -27,8 +27,8 @@ class ExposureNode(NodeInterface, dbtCoreInterface):
         return self.get_node(info).type.value
 
     @strawberry.field
-    def manifest_generated(self, info: strawberry.types.Info) -> Optional[DateTime]:
-        return DateTime(get_manifest(info).metadata.generated_at)
+    def manifest_generated(self, info: strawberry.types.Info) -> Optional[datetime]:
+        return get_manifest(info).metadata.generated_at
 
     @strawberry.field
     def maturity(self, info: strawberry.types.Info) -> Optional[str]:

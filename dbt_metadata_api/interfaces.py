@@ -1,9 +1,10 @@
+from datetime import datetime
 from typing import Any, Optional
 
 import strawberry
 import strawberry.types
 
-from .scalars import DateTime, JSONObject
+from .scalars import JSONObject
 from .utils import get_manifest
 
 
@@ -18,8 +19,8 @@ class dbtCoreInterface:
         return get_manifest(info).metadata.dbt_version
 
     @strawberry.field
-    def generated_at(self, info: strawberry.types.Info) -> DateTime:
-        return DateTime(get_manifest(info).metadata.generated_at)
+    def generated_at(self, info: strawberry.types.Info) -> datetime:
+        return get_manifest(info).metadata.generated_at
 
     @strawberry.field
     def invocation_id(self, info: strawberry.types.Info) -> str:
@@ -72,7 +73,7 @@ class NodeInterface:
     @strawberry.field(
         description=(
             "Relative file path of this resource's definition within "
-            "its \"resource path\""
+            'its "resource path"'
         ),
     )
     def path(self, info: strawberry.types.Info) -> Optional[str]:
