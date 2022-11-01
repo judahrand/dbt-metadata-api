@@ -1,8 +1,8 @@
 from typing import Optional
 
 import strawberry
-from dbt.contracts.graph.manifest import WritableManifest
-from pydantic import BaseModel
+import strawberry.types
+from dbt.contracts.graph.parsed import ParsedSourceDefinition
 
 from ..enums import TimePeriod
 from ..interfaces import NodeInterface, dbtCoreInterface
@@ -12,14 +12,12 @@ from .common import CatalogColumn, Criteria, CriteriaInfo
 
 @strawberry.type
 class SourceNode(NodeInterface, dbtCoreInterface):
-    _resource_type: strawberry.Private[str] = "source"
-
-    def get_node(self, manifest: WritableManifest) -> BaseModel:
-        return manifest.sources[self.unique_id]
+    def get_node(self, info: strawberry.types.Info) -> ParsedSourceDefinition:
+        return get_manifest(info).sources[self.unique_id]
 
     @strawberry.field
     def children_l1(self, info: strawberry.types.Info) -> Optional[list[str]]:
-        manifest = get_manifest(info.context)
+        manifest = get_manifest(info)
         return manifest.child_map[self.unique_id]
 
     @strawberry.field
@@ -33,14 +31,12 @@ class SourceNode(NodeInterface, dbtCoreInterface):
                 tags=col.tags,
                 type=col.data_type,
             )
-            for idx, col in enumerate(
-                self.get_node(get_manifest(info.context)).columns.values()
-            )
+            for idx, col in enumerate(self.get_node(info).columns.values())
         ]
 
     @strawberry.field
     def criteria(self, info: strawberry.types.Info) -> Optional[Criteria]:
-        node = self.get_node(get_manifest(info.context))
+        node = self.get_node(info)
         return Criteria(
             error_after=CriteriaInfo(
                 count=node.freshness.error_after.count,
@@ -54,24 +50,24 @@ class SourceNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def database(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(get_manifest(info.context)).database
+        return self.get_node(info).database
 
     @strawberry.field
     def identifier(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(get_manifest(info.context)).identifier
+        return self.get_node(info).identifier
 
     @strawberry.field
     def loader(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(get_manifest(info.context)).loader
+        return self.get_node(info).loader
 
     @strawberry.field
     def schema(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(get_manifest(info.context)).schema_
+        return self.get_node(info).schema_
 
     @strawberry.field
     def source_description(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(get_manifest(info.context)).source_description
+        return self.get_node(info).source_description
 
     @strawberry.field
     def source_name(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(get_manifest(info.context)).source_name
+        return self.get_node(info).source_name

@@ -1,12 +1,11 @@
 from typing import Optional
 
 import strawberry
-from dbt.contracts.graph.manifest import WritableManifest
-from pydantic import BaseModel
+import strawberry.types
+from dbt.contracts.graph.parsed import ParsedMetric
 
 from ..interfaces import NodeInterface, dbtCoreInterface
 from ..utils import get_manifest
-from .utils import flatten_depends_on
 
 
 @strawberry.type
@@ -18,28 +17,24 @@ class MetricFilter:
 
 @strawberry.type
 class MetricNode(NodeInterface, dbtCoreInterface):
-    _resource_type: strawberry.Private[str] = "metric"
-
-    def get_node(self, manifest: WritableManifest) -> BaseModel:
-        return manifest.metrics[self.unique_id]
+    def get_node(self, info: strawberry.types.Info) -> ParsedMetric:
+        return get_manifest(info).metrics[self.unique_id]
 
     @strawberry.field
     def calculation_method(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(
-            self.get_node(get_manifest(info.context)), "calculation_method", None
-        )
+        return getattr(self.get_node(info), "calculation_method", None)
 
     @strawberry.field
     def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:
-        return flatten_depends_on(self.get_node(get_manifest(info.context)).depends_on)
+        return self.get_node(info).depends_on_nodes
 
     @strawberry.field
     def dimensions(self, info: strawberry.types.Info) -> Optional[list[str]]:
-        return self.get_node(get_manifest(info.context)).dimensions
+        return self.get_node(info).dimensions
 
     @strawberry.field
     def expression(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(get_manifest(info.context)), "expression", None)
+        return getattr(self.get_node(info), "expression", None)
 
     @strawberry.field
     def filters(self, info: strawberry.types.Info) -> Optional[list[MetricFilter]]:
@@ -49,25 +44,25 @@ class MetricNode(NodeInterface, dbtCoreInterface):
                 operator=filter.operator,
                 value=filter.value,
             )
-            for filter in self.get_node(get_manifest(info.context)).filters
+            for filter in self.get_node(info).filters
         ]
 
     @strawberry.field
     def label(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(get_manifest(info.context)).label
+        return self.get_node(info).label
 
     @strawberry.field
     def model(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(get_manifest(info.context)).model
+        return self.get_node(info).model
 
     @strawberry.field
     def sql(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(get_manifest(info.context)), "sql", None)
+        return getattr(self.get_node(info), "sql", None)
 
     @strawberry.field
     def time_grains(self, info: strawberry.types.Info) -> Optional[list[str]]:
-        return self.get_node(get_manifest(info.context)).time_grains
+        return self.get_node(info).time_grains
 
     @strawberry.field
     def timestamp(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(get_manifest(info.context)).timestamp
+        return self.get_node(info).timestamp

@@ -1,7 +1,8 @@
 import hashlib
 import pathlib
-from typing import Any, cast
+from typing import cast
 
+import strawberry.types
 from dbt.contracts.graph.manifest import WritableManifest
 
 
@@ -28,5 +29,5 @@ class ManifestLoader:
         return self.manifest
 
 
-def get_manifest(context: dict[str, Any]) -> WritableManifest:
-    return cast(context["manifest"], WritableManifest)
+def get_manifest(info: strawberry.types.Info) -> WritableManifest:
+    return cast(info.context["manifest"], WritableManifest)

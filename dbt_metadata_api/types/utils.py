@@ -1,21 +1,4 @@
-from typing import Optional
-
-from pydantic import BaseModel
-
 from ..interfaces import NodeInterface
-
-
-def flatten_depends_on(depends_on: BaseModel) -> Optional[list[str]]:
-    flat_depends_on = []
-    attrs = ("macros", "nodes")
-    for attr in attrs:
-        item = getattr(depends_on, attr)
-        if isinstance(item, str):
-            flat_depends_on.append(item)
-        else:
-            flat_depends_on.extend(item)
-
-    return flat_depends_on
 
 
 def convert_to_strawberry(

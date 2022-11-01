@@ -21,7 +21,7 @@ from .utils import get_manifest
 class Query:
     @strawberry.field
     def exposures(self, info: strawberry.types.Info) -> list[ExposureNode]:
-        manifest = get_manifest(info.context)
+        manifest = get_manifest(info)
         return [
             convert_to_strawberry(unique_id, "exposure")
             for unique_id in manifest.exposures
@@ -39,7 +39,7 @@ class Query:
 
     @strawberry.field
     def macros(self, info: strawberry.types.Info) -> list[MacroNode]:
-        manifest = get_manifest(info.context)
+        manifest = get_manifest(info)
         return [
             convert_to_strawberry(unique_id, "macro") for unique_id in manifest.macros
         ]
@@ -57,7 +57,7 @@ class Query:
 
     @strawberry.field
     def metrics(self, info: strawberry.types.Info) -> list[MetricNode]:
-        manifest = get_manifest(info.context)
+        manifest = get_manifest(info)
         return [
             convert_to_strawberry(unique_id, "metric") for unique_id in manifest.metrics
         ]
@@ -75,7 +75,7 @@ class Query:
 
     @strawberry.field
     def models(self, info: strawberry.types.Info) -> list[ModelNode]:
-        manifest = get_manifest(info.context)
+        manifest = get_manifest(info)
         return [
             convert_to_strawberry(unique_id, "model")
             for unique_id, node in manifest.nodes.items()
@@ -95,7 +95,7 @@ class Query:
 
     @strawberry.field
     def seeds(self, info: strawberry.types.Info) -> list[SeedNode]:
-        manifest = get_manifest(info.context)
+        manifest = get_manifest(info)
         return [
             convert_to_strawberry(unique_id, "seed")
             for unique_id, node in manifest.nodes.items()
@@ -114,7 +114,7 @@ class Query:
 
     @strawberry.field
     def snapshots(self, info: strawberry.types.Info) -> list[SnapshotNode]:
-        manifest = get_manifest(info.context)
+        manifest = get_manifest(info)
         return [
             convert_to_strawberry(unique_id, "snapshot")
             for unique_id, node in manifest.nodes.items()
@@ -133,7 +133,7 @@ class Query:
 
     @strawberry.field
     def sources(self, info: strawberry.types.Info) -> list[SourceNode]:
-        manifest = get_manifest(info.context)
+        manifest = get_manifest(info)
         return [
             convert_to_strawberry(unique_id, "source")
             for unique_id in manifest.sources.values()
@@ -151,7 +151,7 @@ class Query:
 
     @strawberry.field
     def tests(self, info: strawberry.types.Info) -> list[TestNode]:
-        manifest = get_manifest(info.context)
+        manifest = get_manifest(info)
         return [
             convert_to_strawberry(unique_id, "test")
             for unique_id, node in manifest.nodes.items()

@@ -1,36 +1,60 @@
-from typing import Optional
+from typing import Optional, Union
 
 import strawberry
+from dbt.contracts.graph.compiled import (
+    CompiledGenericTestNode,
+    CompiledSingularTestNode,
+)
+from dbt.contracts.graph.parsed import ParsedGenericTestNode, ParsedSingularTestNode
 
 from ..interfaces import NodeInterface, dbtCoreInterface
 from ..utils import get_manifest
-from .utils import flatten_depends_on
 
 
 @strawberry.type
 class TestNode(NodeInterface, dbtCoreInterface):
-    _resource_type: strawberry.Private[str] = "test"
+    def get_node(
+        self,
+        info: strawberry.types.Info,
+    ) -> Union[
+        ParsedSingularTestNode,
+        ParsedGenericTestNode,
+        CompiledSingularTestNode,
+        CompiledGenericTestNode,
+    ]:
+        node = get_manifest(info).nodes[self.unique_id]
+        if not isinstance(
+            node,
+            (
+                ParsedSingularTestNode,
+                ParsedGenericTestNode,
+                CompiledSingularTestNode,
+                CompiledGenericTestNode,
+            ),
+        ):
+            raise ValueError(f"Node with unique_id={self.unique_id} is not a TestNode")
+        return node
 
     @strawberry.field
     def column_name(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(get_manifest(info.context)), "column_name", None)
+        return getattr(self.get_node(info), "column_name", None)
 
     @strawberry.field
     def compiled_code(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(get_manifest(info.context)), "compiled_code", None)
+        return self.get_node(info).compiled_code
 
     @strawberry.field
     def compiled_sql(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(get_manifest(info.context)), "compiled_sql", None)
+        return self.compiled_code()
 
     @strawberry.field
     def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:
-        return flatten_depends_on(self.get_node(get_manifest(info.context)).depends_on)
+        return self.get_node(info).depends_on_nodes
 
     @strawberry.field
     def raw_code(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(get_manifest(info.context)), "raw_code", None)
+        return self.get_node(info).raw_code
 
     @strawberry.field
     def raw_sql(self, info: strawberry.types.Info) -> Optional[str]:
-        return getattr(self.get_node(get_manifest(info.context)), "raw_sql", None)
+        return self.raw_code()
