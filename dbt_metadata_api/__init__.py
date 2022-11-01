@@ -1,4 +1,5 @@
 import asyncio
+import os
 import pathlib
 
 import strawberry
@@ -8,7 +9,8 @@ from strawberry.fastapi import GraphQLRouter
 from .query import Query
 from .utils import ManifestLoader
 
-MANIFEST_LOADER = ManifestLoader(pathlib.Path("manifest_v7.json"))
+MANIFEST_PATH = pathlib.Path(os.getenv("DBT_METADATA_MANIFEST", "manifest.json"))
+MANIFEST_LOADER = ManifestLoader(MANIFEST_PATH)
 
 
 def get_context(manifest=Depends(MANIFEST_LOADER.current)):
