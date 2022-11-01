@@ -10,11 +10,7 @@ from .utils import MANIFEST_PATH, Manifest, ManifestLoader
 MANIFEST_LOADER = ManifestLoader(MANIFEST_PATH)
 
 
-def get_manifest() -> Manifest:
-    return MANIFEST_LOADER.manifest
-
-
-def get_context(manifest: Manifest = Depends(get_manifest)):
+def get_context(manifest: Manifest = Depends(MANIFEST_LOADER.current)):
     return {"manifest": manifest}
 
 

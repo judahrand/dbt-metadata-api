@@ -1,24 +1,8 @@
 import hashlib
-import json
 import pathlib
-from typing import Union
+from typing import Any, cast
 
-from dbt_artifacts_parser.parser import (
-    ManifestV5,
-    ManifestV6,
-    ManifestV7,
-    parse_manifest,
-)
-
-from .models.manifest import Model as Manifest
-
-Manifest = Union[
-    ManifestV5,
-    ManifestV6,
-    ManifestV7,
-]
-
-MANIFEST_PATH = pathlib.Path("./manifest_v7.json")
+from dbt.contracts.graph.manifest import WritableManifest
 
 
 class ManifestLoader:
@@ -26,10 +10,10 @@ class ManifestLoader:
         self.manifest_path = manifest_path
         self.manifest, self.hash = self.load()
 
-    def load(self) -> tuple[Manifest, bytes]:
-        content = self.manifest_path.read_text()
-        hash = hashlib.md5(content.encode("UTF-8")).digest()
-        return parse_manifest(json.loads(content)), hash
+    def load(self) -> tuple[WritableManifest, bytes]:
+        manifest = WritableManifest.read_and_check_versions(str(self.manifest_path))
+        hash = hashlib.md5(self.manifest_path.read_text().encode("UTF-8")).digest()
+        return manifest, hash
 
     def refresh(self) -> bool:
         manifest, hash = self.load()
@@ -39,3 +23,10 @@ class ManifestLoader:
             self.hash = hash
             return True
         return False
+
+    def current(self) -> WritableManifest:
+        return self.manifest
+
+
+def get_manifest(context: dict[str, Any]) -> WritableManifest:
+    return cast(context["manifest"], WritableManifest)

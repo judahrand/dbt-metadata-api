@@ -1,11 +1,12 @@
 from typing import Optional
 
 import strawberry
+from dbt.contracts.graph.manifest import WritableManifest
 from pydantic import BaseModel
 
 from ..interfaces import NodeInterface, dbtCoreInterface
 from ..scalars import DateTime
-from ..utils import Manifest
+from ..utils import get_manifest
 from .models import ModelNode
 from .sources import SourceNode
 from .utils import convert_to_strawberry, flatten_depends_on
@@ -15,36 +16,36 @@ from .utils import convert_to_strawberry, flatten_depends_on
 class ExposureNode(NodeInterface, dbtCoreInterface):
     _resource_type: strawberry.Private[str] = "exposure"
 
-    def get_node(self, manifest: Manifest) -> BaseModel:
+    def get_node(self, manifest: WritableManifest) -> BaseModel:
         return manifest.exposures[self.unique_id]
 
     @strawberry.field
     def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:
-        return flatten_depends_on(self.get_node(info.context["manifest"]).depends_on)
+        return flatten_depends_on(self.get_node(get_manifest(info.context)).depends_on)
 
     @strawberry.field
     def exposure_type(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info.context["manifest"]).type.value
+        return self.get_node(get_manifest(info.context)).type.value
 
     @strawberry.field
     def manifest_generated(self, info: strawberry.types.Info) -> Optional[DateTime]:
-        return DateTime(info.context["manifest"].metadata.generated_at)
+        return DateTime(get_manifest(info.context).metadata.generated_at)
 
     @strawberry.field
     def maturity(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info.context["manifest"]).maturity.value
+        return self.get_node(get_manifest(info.context)).maturity.value
 
     @strawberry.field
     def owner_email(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info.context["manifest"]).owner.email
+        return self.get_node(get_manifest(info.context)).owner.email
 
     @strawberry.field
     def owner_name(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info.context["manifest"]).owner.name
+        return self.get_node(get_manifest(info.context)).owner.name
 
     @strawberry.field
     def parents(self, info: strawberry.types.Info) -> Optional[list[NodeInterface]]:
-        manifest = info.context["manifest"]
+        manifest = get_manifest(info.context)
         return [
             convert_to_strawberry(
                 unique_id, manifest.nodes[unique_id].resource_type.name
@@ -68,4 +69,4 @@ class ExposureNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def url(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info.context["manifest"]).url
+        return self.get_node(get_manifest(info.context)).url

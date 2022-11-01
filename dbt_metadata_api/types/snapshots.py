@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Annotated, Optional
 import strawberry
 
 from ..interfaces import NodeInterface, dbtCoreInterface
+from ..utils import get_manifest
 from .common import CatalogColumn
 from .utils import convert_to_strawberry
 
@@ -17,11 +18,11 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def alias(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info.context["manifest"]).alias
+        return self.get_node(get_manifest(info.context)).alias
 
     @strawberry.field
     def children_l1(self, info: strawberry.types.Info) -> Optional[list[str]]:
-        manifest = info.context["manifest"]
+        manifest = get_manifest(info.context)
         return manifest.child_map[self.unique_id]
 
     @strawberry.field
@@ -36,14 +37,14 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
                 type=col.data_type,
             )
             for idx, col in enumerate(
-                self.get_node(info.context["manifest"]).columns.values()
+                self.get_node(get_manifest(info.context)).columns.values()
             )
         ]
 
     @strawberry.field
     def compiled_code(self, info: strawberry.types.Info) -> Optional[str]:
         return getattr(
-            self.get_node(info.context["manifest"]),
+            self.get_node(get_manifest(info.context)),
             "compiled_code",
             None,
         )
@@ -51,20 +52,20 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
     @strawberry.field
     def compiled_sql(self, info: strawberry.types.Info) -> Optional[str]:
         return getattr(
-            self.get_node(info.context["manifest"]),
+            self.get_node(get_manifest(info.context)),
             "compiled_sql",
             None,
         )
 
     @strawberry.field
     def database(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info.context["manifest"]).database
+        return self.get_node(get_manifest(info.context)).database
 
     @strawberry.field
     def parents_models(
         self, info: strawberry.types.Info
     ) -> Optional[list[Annotated["ModelNode", strawberry.lazy(".models")]]]:
-        manifest = info.context["manifest"]
+        manifest = get_manifest(info.context)
         parents = manifest.parent_map[self.unique_id]
         return [
             convert_to_strawberry(unique_id, "model")
@@ -77,7 +78,7 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
         self,
         info: strawberry.types.Info,
     ) -> Optional[list[Annotated["SourceNode", strawberry.lazy(".sources")]]]:
-        manifest = info.context["manifest"]
+        manifest = get_manifest(info.context)
         parents = manifest.parent_map[self.unique_id]
         return [
             convert_to_strawberry(unique_id, "source")
@@ -88,7 +89,7 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
     @strawberry.field
     def raw_code(self, info: strawberry.types.Info) -> Optional[str]:
         return getattr(
-            self.get_node(info.context["manifest"]),
+            self.get_node(get_manifest(info.context)),
             "raw_code",
             None,
         )
@@ -96,11 +97,11 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
     @strawberry.field
     def raw_sql(self, info: strawberry.types.Info) -> Optional[str]:
         return getattr(
-            self.get_node(info.context["manifest"]),
+            self.get_node(get_manifest(info.context)),
             "raw_sql",
             None,
         )
 
     @strawberry.field
     def schema(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info.context["manifest"]).schema_
+        return self.get_node(get_manifest(info.context)).schema_
