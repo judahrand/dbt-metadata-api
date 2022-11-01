@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "dbt-metadata-api"
+version = "0.1.0"
+description = "A GraphQL API for interacting with dbt Artifacts."
+authors = ["Judah Rand <17158624+judahrand@users.noreply.github.com>"]
+license = "Apache License 2.0"
+readme = "README.md"
+packages = [{include = "dbt_metadata_api"}]
+
+[tool.poetry.dependencies]
+python = ">=3.7.2,<4.0"
+dbt-core = "^1.3.0"
+python-dateutil = "^2.8.2"
+strawberry-graphql = {extras = ["fastapi"], version = "^0.138.1"}
+uvicorn = "^0.19.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.10.0"
+isort = "^5.10.1"
+flake8 = "^5.0.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

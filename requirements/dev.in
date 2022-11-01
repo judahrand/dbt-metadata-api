@@ -1,3 +1,0 @@
-datamodel-code-generator[http]
-python-dateutil
-strawberry-graphql[cli, debug-server, fastapi, pydantic]
