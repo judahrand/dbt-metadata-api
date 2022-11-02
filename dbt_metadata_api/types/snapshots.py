@@ -32,7 +32,10 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def children_l1(self, info: strawberry.types.Info) -> Optional[list[str]]:
-        return get_manifest(info).child_map[self.unique_id]
+        manifest = get_manifest(info)
+        if manifest.child_map is not None:
+            return manifest.child_map[self.unique_id]
+        return None
 
     @strawberry.field
     def columns(self, info: strawberry.types.Info) -> Optional[list[CatalogColumn]]:
@@ -40,12 +43,16 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def compiled_code(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info).compiled_code
+        node = self.get_node(info)
+        if isinstance(node, CompiledSnapshotNode):
+            return node.compiled_code
+        return None
 
     @strawberry.field
     def compiled_sql(self, info: strawberry.types.Info) -> Optional[str]:
         if self.get_node(info).language == "sql":
             return self.compiled_code(info)
+        return None
 
     @strawberry.field
     def database(self, info: strawberry.types.Info) -> Optional[str]:
@@ -55,18 +62,22 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
     def parents_models(
         self, info: strawberry.types.Info
     ) -> Optional[list[Annotated["ModelNode", strawberry.lazy(".models")]]]:
-        return get_parents(
-            self.unique_id, get_manifest(info), resource_types=("model",)
-        )
-
-    @strawberry.field
-    def parents_sources(
-        self,
-        info: strawberry.types.Info,
-    ) -> Optional[list[Annotated["SourceNode", strawberry.lazy(".sources")]]]:
-        return get_parents(
+        parents = get_parents(
             self.unique_id, get_manifest(info), resource_types=("source",)
         )
+        if parents is not None:
+            return [ModelNode(unique_id=unique_id) for unique_id in parents]
+        return None
+
+    def parents_sources(
+        self, info: strawberry.types.Info
+    ) -> Optional[list[Annotated["SourceNode", strawberry.lazy(".sources")]]]:
+        parents = get_parents(
+            self.unique_id, get_manifest(info), resource_types=("source",)
+        )
+        if parents is not None:
+            return [SourceNode(unique_id=unique_id) for unique_id in parents]
+        return None
 
     @strawberry.field
     def raw_code(self, info: strawberry.types.Info) -> Optional[str]:
@@ -76,6 +87,7 @@ class SnapshotNode(NodeInterface, dbtCoreInterface):
     def raw_sql(self, info: strawberry.types.Info) -> Optional[str]:
         if self.get_node(info).language == "sql":
             return self.raw_code(info)
+        return None
 
     @strawberry.field
     def schema(self, info: strawberry.types.Info) -> Optional[str]:

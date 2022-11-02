@@ -5,10 +5,10 @@ import strawberry.types
 from dbt.contracts.graph.parsed import ParsedSourceDefinition
 
 from dbt_metadata_api.interfaces import NodeInterface, dbtCoreInterface
+from dbt_metadata_api.types.utils import get_criteria
 from dbt_metadata_api.utils import get_manifest
 
-from ..enums import TimePeriod
-from .common import CatalogColumn, Criteria, CriteriaInfo
+from .common import CatalogColumn, Criteria
 
 
 @strawberry.type
@@ -19,7 +19,9 @@ class SourceNode(NodeInterface, dbtCoreInterface):
     @strawberry.field
     def children_l1(self, info: strawberry.types.Info) -> Optional[list[str]]:
         manifest = get_manifest(info)
-        return manifest.child_map[self.unique_id]
+        if manifest.child_map is not None:
+            return manifest.child_map[self.unique_id]
+        return None
 
     @strawberry.field
     def columns(self, info: strawberry.types.Info) -> Optional[list[CatalogColumn]]:
@@ -38,16 +40,9 @@ class SourceNode(NodeInterface, dbtCoreInterface):
     @strawberry.field
     def criteria(self, info: strawberry.types.Info) -> Optional[Criteria]:
         node = self.get_node(info)
-        return Criteria(
-            error_after=CriteriaInfo(
-                count=node.freshness.error_after.count,
-                period=TimePeriod(node.freshness.error_after.period),
-            ),
-            warn_after=CriteriaInfo(
-                count=node.freshness.warn_after.count,
-                period=TimePeriod(node.freshness.warn_after.count),
-            ),
-        )
+        if node.freshness is not None:
+            return get_criteria(node.freshness)
+        return None
 
     @strawberry.field
     def database(self, info: strawberry.types.Info) -> Optional[str]:

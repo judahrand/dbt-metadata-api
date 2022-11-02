@@ -27,8 +27,11 @@ class SeedNode(NodeInterface, dbtCoreInterface):
         return self.get_node(info).alias
 
     @strawberry.field
-    def children_l1(self, info: strawberry.types.Info) -> Optional[str]:
-        return get_manifest(info).child_map[self.unique_id]
+    def children_l1(self, info: strawberry.types.Info) -> Optional[list[str]]:
+        manifest = get_manifest(info)
+        if manifest.child_map is not None:
+            return manifest.child_map[self.unique_id]
+        return None
 
     @strawberry.field
     def columns(self, info: strawberry.types.Info) -> Optional[list[CatalogColumn]]:
@@ -36,12 +39,16 @@ class SeedNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def compiled_code(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info).compiled_code
+        node = self.get_node(info)
+        if isinstance(node, CompiledSeedNode):
+            return node.compiled_code
+        return None
 
     @strawberry.field
     def compiled_sql(self, info: strawberry.types.Info) -> Optional[str]:
         if self.get_node(info).language == "sql":
             return self.compiled_code(info)
+        return None
 
     @strawberry.field
     def database(self, info: strawberry.types.Info) -> Optional[str]:
@@ -55,6 +62,7 @@ class SeedNode(NodeInterface, dbtCoreInterface):
     def raw_sql(self, info: strawberry.types.Info) -> Optional[str]:
         if self.get_node(info).language == "sql":
             return self.raw_sql(info)
+        return None
 
     @strawberry.field
     def schema(self, info: strawberry.types.Info) -> Optional[str]:

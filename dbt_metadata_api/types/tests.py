@@ -37,16 +37,20 @@ class TestNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def column_name(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info).column_name
+        return getattr(self.get_node(info), "column_name", None)
 
     @strawberry.field
     def compiled_code(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info).compiled_code
+        node = self.get_node(info)
+        if isinstance(node, (CompiledGenericTestNode, CompiledSingularTestNode)):
+            return node.compiled_code
+        return None
 
     @strawberry.field
     def compiled_sql(self, info: strawberry.types.Info) -> Optional[str]:
         if self.get_node(info).language == "sql":
             return self.compiled_code(info)
+        return None
 
     @strawberry.field
     def depends_on(self, info: strawberry.types.Info) -> Optional[list[str]]:
@@ -60,3 +64,4 @@ class TestNode(NodeInterface, dbtCoreInterface):
     def raw_sql(self, info: strawberry.types.Info) -> Optional[str]:
         if self.get_node(info).language == "sql":
             return self.raw_code(info)
+        return None

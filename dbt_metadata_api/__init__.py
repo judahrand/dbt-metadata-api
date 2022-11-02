@@ -1,8 +1,8 @@
 import asyncio
 import os
-import upath
 
 import strawberry
+import upath
 from fastapi import Depends, FastAPI
 from strawberry.fastapi import GraphQLRouter
 
@@ -33,7 +33,7 @@ app.include_router(graphql_app, prefix="/graphql")
 async def refresh_manifest(manifest_loader: ManifestLoader):
     loop = asyncio.get_running_loop()
     while True:
-        await asyncio.sleep(DBT_METADATA_REFRESH)
+        await asyncio.sleep(float(DBT_METADATA_REFRESH))
         await loop.run_in_executor(executor=None, func=manifest_loader.refresh)
 
 

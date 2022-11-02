@@ -1,9 +1,9 @@
 import hashlib
 import tempfile
-import upath
 from typing import cast
 
 import strawberry.types
+import upath
 from dbt.contracts.graph.manifest import WritableManifest
 
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Annotated, Optional
 
 import strawberry
 import strawberry.types
@@ -32,7 +32,10 @@ class ExposureNode(NodeInterface, dbtCoreInterface):
 
     @strawberry.field
     def maturity(self, info: strawberry.types.Info) -> Optional[str]:
-        return self.get_node(info).maturity.value
+        node = self.get_node(info)
+        if node.maturity is not None:
+            return node.maturity.value
+        return None
 
     @strawberry.field
     def owner_email(self, info: strawberry.types.Info) -> Optional[str]:
@@ -43,18 +46,25 @@ class ExposureNode(NodeInterface, dbtCoreInterface):
         return self.get_node(info).owner.name
 
     @strawberry.field
-    def parents_models(self, info: strawberry.types.Info) -> Optional[list[ModelNode]]:
-        return get_parents(
-            self.unique_id, get_manifest(info), resource_types=("model",)
-        )
-
-    @strawberry.field
-    def parents_sources(
+    def parents_models(
         self, info: strawberry.types.Info
-    ) -> Optional[list[SourceNode]]:
-        return get_parents(
+    ) -> Optional[list["ModelNode"]]:
+        parents = get_parents(
             self.unique_id, get_manifest(info), resource_types=("source",)
         )
+        if parents is not None:
+            return [ModelNode(unique_id=unique_id) for unique_id in parents]
+        return None
+
+    def parents_sources(
+        self, info: strawberry.types.Info
+    ) -> Optional[list[Annotated["SourceNode", strawberry.lazy(".sources")]]]:
+        parents = get_parents(
+            self.unique_id, get_manifest(info), resource_types=("source",)
+        )
+        if parents is not None:
+            return [SourceNode(unique_id=unique_id) for unique_id in parents]
+        return None
 
     @strawberry.field
     def url(self, info: strawberry.types.Info) -> Optional[str]:

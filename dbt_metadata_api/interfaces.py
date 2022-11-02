@@ -23,7 +23,7 @@ class dbtCoreInterface:
         return get_manifest(info).metadata.generated_at
 
     @strawberry.field
-    def invocation_id(self, info: strawberry.types.Info) -> str:
+    def invocation_id(self, info: strawberry.types.Info) -> Optional[str]:
         return get_manifest(info).metadata.invocation_id
 
     @strawberry.field
@@ -36,7 +36,7 @@ class dbtCoreInterface:
 
     @strawberry.field
     def user_id(self, info: strawberry.types.Info) -> Optional[str]:
-        return get_manifest(info).metadata.user_id
+        return str(get_manifest(info).metadata.user_id)
 
     @strawberry.field
     def send_anonymous_usage_stats(self, info: strawberry.types.Info) -> Optional[bool]:
