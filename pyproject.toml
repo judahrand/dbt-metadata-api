@@ -29,6 +29,9 @@ gcs = ["gcsfs"]
 s3 = ["s3fs"]
 azure = ["adlfs"]
 
+[tool.black]
+target-version = ['py38']
+
 [tool.isort]
 profile = "black"
 

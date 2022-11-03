@@ -1,0 +1,32 @@
+name: "CI"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+jobs:
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-22.04
+
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - run: pipx install poetry
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+          cache: poetry
+
+      - run: poetry install --all-extras
+
+      - run: poetry run black --check dbt_metadata_api/
+
+      - run: poetry run isort --check dbt_metadata_api/
+
+      - run: poetry run flake8 dbt_metadata_api/
